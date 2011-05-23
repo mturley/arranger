@@ -4,19 +4,21 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT      += core gui
 
 TARGET = arranger
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    phrase.cpp \
-    lilygen.cpp
+SOURCES += \
+    src/main.cpp\
+    src/mainwindow.cpp \
+    src/phrase.cpp \
+    src/lilygen.cpp
 
-HEADERS  += mainwindow.h \
-    phrase.h \
-    lilygen.h
+HEADERS += \
+    src\mainwindow.h \
+    src\phrase.h \
+    src\lilygen.h
 
-FORMS    += mainwindow.ui
+FORMS   += mainwindow.ui
