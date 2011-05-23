@@ -35,10 +35,12 @@ private:
 
 signals:
     void jobAdded();
+    void startProc();
 
 private slots:
-    void startJob();
-    void finishJob();
+    void startJobs();
+    void processHead();
+    void finishedJob(int);
 
 private:
     static LilyGen* m_instance;

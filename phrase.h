@@ -3,9 +3,10 @@
 
 #include <QImage>
 
-class Phrase {
+class Phrase : public QObject {
+    Q_OBJECT
 public:
-    Phrase() : m_loading(false) { }
+    Phrase(QString,QString = "",QObject* = 0);
 public slots:
     void refresh();
 
