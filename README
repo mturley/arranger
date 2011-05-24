@@ -1,0 +1,45 @@
+Arranger is a score editor for lilypond.
+
+Goals:
+  Fast turn around between note entry and a visual product
+    This will be achieved by storing scores as a collection of fragments that
+    can be individually generated while working on a project, providing for
+    more immediate feedback on whether or not lilypond input is correct.
+  Organization
+    Arranger will represent scores internally (to a degree). By taking
+    organization of scores out of the hands of the user, they can focus on the
+    more important subject of actually writing the score. Perhaps this could be
+    customized at some point but thats not really a goal at the moment.
+
+Representation of an Arranger project:
+
+  Scores contain staves contain voices.
+  Voices are a mixture of phrases and content.
+
+                   Score
+                     |
+       -------------------------------
+       |             |               |
+     Staff         Staff           Staff
+       |             |               |
+    -------        Voice           Voice
+    |     |         ...              |
+  Voice Voice             --------------------------
+   ...   ...              |       |       |        |
+                       Phrase  Phrase  Content  Phrase
+                        ...     ...                |
+                                                Content
+TODO:
+  - improve code documentation
+      it is my belief that code should document itself, but a standard would be
+      nice and class definitions never hurt anybody
+  - unit tests
+      google has a nice unit test framework...
+  - ui
+      none of the ui is written yet
+  - internal score representation
+  - pdf viewer
+  - phrase list widget
+  - save and export scores
+  - import scores
+  - a lot of other things
