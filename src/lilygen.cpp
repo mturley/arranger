@@ -12,74 +12,114 @@ LilyGen* LilyGen::Inst() {
     return m_instance;
 }
 
-LilyGen::LilyGen(QObject* parent) :
-    QObject(parent) {
+LilyGen::LilyGen(QObject* parent) {
+    //m_sem_main.
+    start();
+}
+
+// static refreshPreview
+// returns exit code, stores output in loutput, modifies flags, stores image in a_image
+void LilyGen::refreshPreview(const QString         a_name,
+                             const QString         a_content,
+                             QString*              a_loutput,
+                             Phrase::PreviewFlags* a_flags,
+                             QImage*               a_image) {
+
+    Inst()->m_queue.enqueue(LilyJob(a_name,a_content,a_loutput,a_flags,a_image));
+    //qDebug() << "unlock from add";
+    if(Inst()->m_sem_main.available() == 0)
+        Inst()->m_sem_main.release();
+}
+
+// using a semaphore instead of a mutex since QMutex keeps track of which
+// thread locked it, which isn't what I want. don't freak out about the goto's,
+// they're there to make this easier to read, not more complicated.
+void LilyGen::run() {
+    // have to initialize in thread to avoid family issues
     m_proc = new QProcess();
-    m_proc->setWorkingDirectory("lilypond");
+    while(true) {
+        qDebug() << "Locking" << m_sem_main.available();
+        m_sem_main.acquire();
 
-    connect(m_proc,SIGNAL(finished(int)),this,SLOT(finishedJob(int)));
-    connect(m_proc,SIGNAL(finished(int)),this,SLOT(startJobs()));
-    connect(this,SIGNAL(jobAdded()),this,SLOT(startJobs()));
-}
+        qDebug() << "    Any more jobs?";
+        if(m_queue.count() <= 0)
+            continue;
 
-void LilyGen::refreshPreview(QString a_name,
-                             QString a_content,
-                             QImage* a_image) {
-    Inst()->enqueueJob(a_name,a_content,a_image);
-}
+        qDebug() << "Getting next job...";
+        // pop!
+        LilyJob job = m_queue.head();
+        m_queue.removeFirst();
+        // needs to be here because of goto's
+        QString filename = job.m_name + ".ly";
 
-void LilyGen::enqueueJob(QString a_name,
-                         QString a_content,
-                         QImage* a_image) {
-    m_queue.enqueue(LilyJob(a_name,a_content,a_image));
-    qDebug() << "Added job:" << a_name;
-    emit jobAdded();
-}
+        qDebug() << "    Is job already done?";
+        if((*job.m_flags).testFlag(Phrase::Recent))
+            goto done;
 
-void LilyGen::startJobs() {
-    if(m_proc->state() == (QProcess::Running || QProcess::Starting)) {
-        //qDebug()
-        return;
+        qDebug() << "    Set loading flag";
+        job.setFlag(Phrase::Loading);
+
+        qDebug() << "    Writing file...";
+        if(!writeFile(filename,genFileContent(job.m_content)))
+            goto done;
+
+        qDebug() << "    Starting process...";
+        if(!startProc("./fragment-gen.py",QStringList() << filename << job.m_name))
+            goto done;
+
+        updateJob(job);
+
+        done:
+        qDebug() << "    Unlocking";
+        m_sem_main.release();
     }
-    if(m_queue.count() <= 0) {
-        qDebug() << "No more jobs!";
-        return;
-    }
-    processHead();
 }
 
-void LilyGen::processHead() {
+bool LilyGen::writeFile(const QString filename,QString content) {
     QDir::setCurrent(QDir::currentPath().append("/images"));
-
-    // pop head
-    LilyJob job = m_queue.head();
-    m_queue.removeFirst();
-
-    qDebug() << "Starting job" << job.m_name;
-
-    // create lilypond file
-    QString filename = job.m_name + ".ly";
     QFile file(filename);
+
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qDebug() << "Unable to create file:" << filename;
-        return;
+        qDebug() << "        Unable to create file:" << filename;
+        return false;
     }
+
     QTextStream out(&file);
-    out << genFileContent(job.m_content);
+    out << content;
+    qDebug() << "    Closing file";
     file.close();
 
-
-    // start lilypond
-    QStringList args;
-    args << filename << job.m_name;
-    qDebug() << "Running:" << "fragment-gen.py" << args;
-    m_proc->start("./fragment-gen.py",args);
+    return true;
 }
 
-void LilyGen::finishedJob(int e) {
-    qDebug() << "Finished job." << e;
-    qDebug() << m_proc->readAll();
-    // <report errors if any>
+bool LilyGen::startProc(const QString proc, QStringList args) {
+    m_proc->start(proc,args);
+
+    if(!(m_proc->waitForStarted(1000))) {
+        qDebug() << "        Timeout: process failed to start!";
+        return false;
+    }
+
+    qDebug() << "    Waiting for process to finish...";
+    if(!(m_proc->waitForFinished(-1))) {
+        qDebug() << "        Timeout: process failed to finish!";
+        return false;
+    }
+    return true;
+}
+
+void LilyGen::updateJob(LilyJob& job) {
+    qDebug() << "    Set loutput";
+    job.setLOutpout("message");
+    qDebug() << "    Clear flags";
+    job.clearFlags();
+
+    // set flags
+    qDebug() << "    Set flags";
+    switch(m_proc->exitCode()) {
+        case  0: job.setFlag(Phrase::Recent); break;
+        default: job.setFlag(Phrase::Error);  break;
+    }
 }
 
 QString LilyGen::genFileContent(QString block) {
