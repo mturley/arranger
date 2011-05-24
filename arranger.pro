@@ -14,11 +14,12 @@ SOURCES += \
     src/main.cpp\
     src/mainwindow.cpp \
     src/phrase.cpp \
-    src/lilygen.cpp
+    src/lilygen.cpp \
+    src/fragment-gen.py
 
 HEADERS += \
-    src\mainwindow.h \
-    src\phrase.h \
-    src\lilygen.h
+    src/mainwindow.h \
+    src/phrase.h \
+    src/lilygen.h
 
 FORMS   += mainwindow.ui
