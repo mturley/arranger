@@ -49,7 +49,7 @@ void LilyGen::startJobs() {
 }
 
 void LilyGen::processHead() {
-    QDir::setCurrent(QDir::currentPath().append("/lilypond"));
+    QDir::setCurrent(QDir::currentPath().append("/images"));
 
     // pop head
     LilyJob job = m_queue.head();
@@ -58,25 +58,45 @@ void LilyGen::processHead() {
     qDebug() << "Starting job" << job.m_name;
 
     // create lilypond file
-    QString filename = job.m_name.append(".ly");
+    QString filename = job.m_name + ".ly";
     QFile file(filename);
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qDebug() << "Unable to create file:" << filename;
         return;
     }
     QTextStream out(&file);
-    out << job.m_content;
+    out << genFileContent(job.m_content);
     file.close();
 
 
     // start lilypond
     QStringList args;
-    args << "--png" << "-dresolution=300" << filename;
-    qDebug() << "Running:" << "lilypond" << args;
-    m_proc->start("lilypond",args);
+    args << filename << job.m_name;
+    qDebug() << "Running:" << "fragment-gen.py" << args;
+    m_proc->start("./fragment-gen.py",args);
 }
 
 void LilyGen::finishedJob(int e) {
     qDebug() << "Finished job." << e;
+    qDebug() << m_proc->readAll();
     // <report errors if any>
+}
+
+QString LilyGen::genFileContent(QString block) {
+    // this function needs a lot of work
+    // but this should suffice for now :/
+
+    QString result = "\\version \"2.8.1\"\n";
+    result.append(   "\\header {\n");
+    result.append(   "  tagline = \"\"\n");
+    result.append(   "}\n");
+    result.append(   "\\paper {\n");
+    result.append(   "  ragged-right = ##t\n");
+    result.append(   "  indent = 0.0\\mm\n");
+    result.append(   "  line-width = 100\\pt\n");
+    result.append(   "}\n");
+
+    result.append("{").append(block).append("}\n");
+
+    return result;
 }

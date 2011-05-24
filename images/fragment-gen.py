@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import os
 import subprocess
 import argparse
@@ -9,7 +10,6 @@ parser.add_argument('infile',    help='name of lilypond file')
 parser.add_argument('name',      help='name of output file')
 
 args = parser.parse_args()
-print args
 
 # generate png
 r_lilypond = subprocess.call(['lilypond','--png',

@@ -32,6 +32,7 @@ private:
     static LilyGen* Inst();
 
     void enqueueJob(QString,QString,QImage*);
+    QString genFileContent(QString);
 
 signals:
     void jobAdded();
