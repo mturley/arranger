@@ -18,6 +18,18 @@ public:
 public slots:
     void refresh();
 
+    const QString getName();
+    const QString getContent();
+
+    void setLOutput(QString);
+    void setFlag(PreviewFlag);
+    bool testFlag(PreviewFlag);
+    void clearFlags();
+
+    void setPreview(QImage*);
+signals:
+    void loutputChanged();
+
 private:
     QString      m_name;             // the name of this phrase
     QString      m_content;          // the musical content

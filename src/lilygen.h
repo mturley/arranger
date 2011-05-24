@@ -17,42 +17,13 @@ class LilyGen : public QThread {
     Q_OBJECT
 private:
     struct LilyJob {
-        LilyJob(const QString         a_name,
-                const QString         a_content,
-                QString*              a_loutput,
-                Phrase::PreviewFlags* a_flags,
-                QImage*               a_image) {
-            m_name    = a_name;
-            m_content = a_content;
-            m_loutput = a_loutput;
-            m_flags   = a_flags;
-            m_image   = a_image;
-        }
-        inline void setLOutpout(QString msg) {
-            *(m_loutput) = msg;
-        }
+        LilyJob(Phrase* a_phrase) : m_phrase(a_phrase) { }
 
-        inline void setFlag(Phrase::PreviewFlag flag) {
-            *(m_flags) |= flag;
-        }
-
-        inline void clearFlags() {
-            *(m_flags) &= 0x0;
-        }
-
-        QString               m_name;
-        QString               m_content;
-        QString*              m_loutput;
-        Phrase::PreviewFlags* m_flags;
-        QImage*               m_image;
+        Phrase* m_phrase;
     };
 
 public:
-    static void refreshPreview(const QString,
-                               const QString,
-                               QString*,
-                               Phrase::PreviewFlags*,
-                               QImage*);
+    static void refreshPreview(Phrase*);
 
 private:
     static LilyGen* Inst();

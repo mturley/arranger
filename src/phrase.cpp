@@ -15,5 +15,40 @@ Phrase::~Phrase() {
 }
 
 void Phrase::refresh() {
-    LilyGen::refreshPreview(m_name,m_content,&m_loutput,&m_preview_flags,m_preview);
+    LilyGen::refreshPreview(this);
+}
+
+const QString Phrase::getName() {
+    return m_name;
+}
+
+const QString Phrase::getContent() {
+    return m_content;
+}
+
+void Phrase::setLOutput(QString msg) {
+    m_loutput = msg;
+}
+
+void Phrase::setFlag(Phrase::PreviewFlag flag) {
+    m_preview_flags |= flag;
+}
+
+bool Phrase::testFlag(PreviewFlag flag) {
+    return m_preview_flags.testFlag(flag);
+}
+
+void Phrase::clearFlags() {
+    m_preview_flags &= 0x0;
+}
+
+void Phrase::setPreview(QImage* a_preview) {
+    // save old image
+    QImage* temp = m_preview;
+    m_preview = a_preview;
+    // delete old image if necessary
+    if(temp) {
+        qDebug() << "Deleting previous image.";
+        delete temp;
+    }
 }

@@ -19,13 +19,9 @@ LilyGen::LilyGen(QObject* parent) {
 
 // static refreshPreview
 // returns exit code, stores output in loutput, modifies flags, stores image in a_image
-void LilyGen::refreshPreview(const QString         a_name,
-                             const QString         a_content,
-                             QString*              a_loutput,
-                             Phrase::PreviewFlags* a_flags,
-                             QImage*               a_image) {
+void LilyGen::refreshPreview(Phrase* a_phrase) {
 
-    Inst()->m_queue.enqueue(LilyJob(a_name,a_content,a_loutput,a_flags,a_image));
+    Inst()->m_queue.enqueue(LilyJob(a_phrase));
     //qDebug() << "unlock from add";
     if(Inst()->m_sem_main.available() == 0)
         Inst()->m_sem_main.release();
@@ -50,21 +46,21 @@ void LilyGen::run() {
         LilyJob job = m_queue.head();
         m_queue.removeFirst();
         // needs to be here because of goto's
-        QString filename = job.m_name + ".ly";
+        QString filename = job.m_phrase->getName() + ".ly";
 
         qDebug() << "    Is job already done?";
-        if((*job.m_flags).testFlag(Phrase::Recent))
+        if(job.m_phrase->testFlag(Phrase::Recent))
             goto done;
 
         qDebug() << "    Set loading flag";
-        job.setFlag(Phrase::Loading);
+        job.m_phrase->setFlag(Phrase::Loading);
 
         qDebug() << "    Writing file...";
-        if(!writeFile(filename,genFileContent(job.m_content)))
+        if(!writeFile(filename,genFileContent(job.m_phrase->getContent())))
             goto done;
 
         qDebug() << "    Starting process...";
-        if(!startProc("./fragment-gen.py",QStringList() << filename << job.m_name))
+        if(!startProc("./fragment-gen.py",QStringList() << filename << job.m_phrase->getName()))
             goto done;
 
         updateJob(job);
@@ -110,15 +106,15 @@ bool LilyGen::startProc(const QString proc, QStringList args) {
 
 void LilyGen::updateJob(LilyJob& job) {
     qDebug() << "    Set loutput";
-    job.setLOutpout("message");
+    job.m_phrase->setLOutput("message");
     qDebug() << "    Clear flags";
-    job.clearFlags();
+    job.m_phrase->clearFlags();
 
     // set flags
     qDebug() << "    Set flags";
     switch(m_proc->exitCode()) {
-        case  0: job.setFlag(Phrase::Recent); break;
-        default: job.setFlag(Phrase::Error);  break;
+        case  0: job.m_phrase->setFlag(Phrase::Recent); break;
+        default: job.m_phrase->setFlag(Phrase::Error);  break;
     }
 }
 
