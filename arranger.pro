@@ -14,11 +14,13 @@ SOURCES += \
     src/main.cpp\
     src/mainwindow.cpp \
     src/phrase.cpp \
-    src/lilygen.cpp
+    src/lilygen.cpp \
+    src/phraseeditor.cpp
 
 HEADERS += \
     src/mainwindow.h \
     src/phrase.h \
-    src/lilygen.h
+    src/lilygen.h \
+    src/phraseeditor.h
 
 FORMS   += ui/mainwindow.ui

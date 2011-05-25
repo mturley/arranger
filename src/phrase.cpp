@@ -27,6 +27,10 @@ const QString Phrase::getContent() {
     return m_content;
 }
 
+const QString Phrase::getLOutput() {
+    return m_loutput;
+}
+
 QPixmap* Phrase::getPreviewPixmap() {
     QPixmap* pixmap = new QPixmap();
     if(pixmap->convertFromImage(*m_preview));
@@ -67,4 +71,5 @@ void Phrase::setPreview(QImage* a_preview) {
         qDebug() << "Deleting previous image.";
         delete temp;
     }
+    emit previewChanged();
 }

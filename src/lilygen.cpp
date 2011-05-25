@@ -67,7 +67,7 @@ void LilyGen::run() {
             goto done;
 
         qDebug() << "    Starting process...";
-        if(!startProc("./fragment-gen.py",QStringList() << "-r 70" << filename << job.m_phrase->getName()))
+        if(!startProc("./fragment-gen.py",QStringList() << "-r 100" << filename << job.m_phrase->getName()))
             goto done;
 
         updateJob(job);
@@ -147,14 +147,17 @@ QString LilyGen::genFileContent(QString block) {
     // this function needs a lot of work
     // but this should suffice for now :/
 
+    if(block == "")
+        block = "s1";
+
     QString result = "\\version \"2.8.1\"\n";
-    result.append(   "\\header {\n");
-    result.append(   "  tagline = \"\"\n");
-    result.append(   "}\n");
+    //result.append(   "\\header {\n");
+    //result.append(   "  tagline = \"\"\n");
+    //result.append(   "}\n");
     result.append(   "\\paper {\n");
     result.append(   "  ragged-right = ##t\n");
     result.append(   "  indent = 0.0\\mm\n");
-    result.append(   "  line-width = 100\\pt\n");
+    //result.append(   "  line-width = 100\\pt\n");
     result.append(   "}\n");
 
     result.append("{").append(block).append("}\n");

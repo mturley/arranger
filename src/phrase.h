@@ -21,6 +21,7 @@ public slots:
 
     const QString getName();
     const QString getContent();
+    const QString getLOutput();
     QPixmap* getPreviewPixmap();
 
     void setContent(QString);
@@ -32,6 +33,7 @@ public slots:
     void setPreview(QImage*);
 signals:
     void loutputChanged();
+    void previewChanged();
 
 private:
     QString      m_name;             // the name of this phrase
