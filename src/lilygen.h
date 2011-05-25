@@ -7,8 +7,6 @@
 #include <QImage>
 #include <QProcess>
 #include <QThread>
-#include <QMutex>
-#include <QWaitCondition>
 #include <QSemaphore>
 
 #include "phrase.h"
@@ -42,8 +40,6 @@ private:
 private:
     static LilyGen* m_instance;
     QSemaphore m_sem_main;
-    QMutex m_mut_main; //
-    QMutex m_mut_proc;
 
     QQueue<LilyJob> m_queue;
     QProcess* m_proc;
