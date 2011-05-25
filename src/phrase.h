@@ -2,6 +2,7 @@
 #define PHRASE_H
 
 #include <QImage>
+#include <QPixmap>
 
 class Phrase : public QObject {
     Q_OBJECT
@@ -20,7 +21,9 @@ public slots:
 
     const QString getName();
     const QString getContent();
+    QPixmap* getPreviewPixmap();
 
+    void setContent(QString);
     void setLOutput(QString);
     void setFlag(PreviewFlag);
     bool testFlag(PreviewFlag);

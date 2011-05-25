@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QTextStream>
 #include <QDebug>
+#include <QPixmap>
 
 LilyGen* LilyGen::m_instance = NULL;
 
@@ -35,7 +36,11 @@ void LilyGen::run() {
     m_proc = new QProcess();
     while(true) {
         qDebug() << "Locking" << m_sem_main.available();
-        m_sem_main.acquire();
+        // try to acquire all available resources
+        if(m_sem_main.available() > 0)
+            m_sem_main.acquire(m_sem_main.available());
+        else
+            m_sem_main.acquire();
 
         qDebug() << "    Any more jobs?";
         if(m_queue.count() <= 0)
@@ -47,6 +52,7 @@ void LilyGen::run() {
         m_queue.removeFirst();
         // needs to be here because of goto's
         QString filename = job.m_phrase->getName() + ".ly";
+        qDebug() << "    " << job.m_phrase->getName();
 
         qDebug() << "    Is job already done?";
         if(job.m_phrase->testFlag(Phrase::Recent))
@@ -64,6 +70,20 @@ void LilyGen::run() {
             goto done;
 
         updateJob(job);
+
+        qDebug() << "    Script error?";
+        if(m_proc->exitCode() != 0)
+            goto done;
+
+        // load pixmap
+        // braces to indicate scope (avoids cross initilization error)
+        // ps, can't load QPixmap outside of GUI thread
+        {
+            qDebug() << "    Loading image...";
+            QImage* image = new QImage(filename);
+            qDebug() << "    Setting image.";
+            job.m_phrase->setPreview(image);
+        }
 
         done:
         qDebug() << "    Unlocking";
