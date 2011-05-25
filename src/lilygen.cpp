@@ -106,7 +106,7 @@ bool LilyGen::startProc(const QString proc, QStringList args) {
 
 void LilyGen::updateJob(LilyJob& job) {
     qDebug() << "    Set loutput";
-    job.m_phrase->setLOutput("message");
+    job.m_phrase->setLOutput(m_proc->readAllStandardError());
     qDebug() << "    Clear flags";
     job.m_phrase->clearFlags();
 

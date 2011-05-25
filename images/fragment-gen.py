@@ -12,10 +12,9 @@ parser.add_argument('name',      help='name of output file')
 args = parser.parse_args()
 
 # generate png
-r_lilypond = subprocess.call(['lilypond','--png',
-                                         '-dresolution=%i' % (args.res),
-                                         '-o%s' % (args.name),
-                                         args.infile])
+exit_code = subprocess.call(['lilypond','--png',
+                             '-dresolution=%i'%(args.res),
+                             '-o%s'%(args.name),args.infile])
 
 # if it exists, remove the postscript file
 name_ps = '%s.ps' % (args.name)
@@ -27,4 +26,4 @@ name_png = '%s.png' % (args.name)
 if(os.path.exists(name_png)) :
   subprocess.call(['convert',name_png,'-trim','+repage',name_png])
 
-sys.exit(r_lilypond)
+sys.exit(exit_code)
