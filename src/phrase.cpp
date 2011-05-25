@@ -29,9 +29,10 @@ const QString Phrase::getContent() {
 
 QPixmap* Phrase::getPreviewPixmap() {
     QPixmap* pixmap = new QPixmap();
-    return new QPixmap();
     if(pixmap->convertFromImage(*m_preview));
         return pixmap;
+    qDebug() << "Returning blank pixmap!";
+    return new QPixmap();
 }
 
 void Phrase::setContent(QString a_content) {
@@ -58,7 +59,6 @@ void Phrase::clearFlags() {
 }
 
 void Phrase::setPreview(QImage* a_preview) {
-    qDebug() << m_preview;
     // save old image
     QImage* temp = m_preview;
     m_preview = a_preview;

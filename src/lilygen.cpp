@@ -4,6 +4,7 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QPixmap>
+#include <QImageReader>
 
 LilyGen* LilyGen::m_instance = NULL;
 
@@ -66,7 +67,7 @@ void LilyGen::run() {
             goto done;
 
         qDebug() << "    Starting process...";
-        if(!startProc("./fragment-gen.py",QStringList() << filename << job.m_phrase->getName()))
+        if(!startProc("./fragment-gen.py",QStringList() << "-r 70" << filename << job.m_phrase->getName()))
             goto done;
 
         updateJob(job);
@@ -75,12 +76,16 @@ void LilyGen::run() {
         if(m_proc->exitCode() != 0)
             goto done;
 
-        // load pixmap
+        // load image
         // braces to indicate scope (avoids cross initilization error)
-        // ps, can't load QPixmap outside of GUI thread
+        // ps, can't load QPixmap outside of GUI thread, so using QImage
         {
             qDebug() << "    Loading image...";
-            QImage* image = new QImage(filename);
+            QImage* image = new QImage();
+            if(!image->load(job.m_phrase->getName() + ".png")) {
+                qDebug() << "    Load failed!";
+                break;
+            }
             qDebug() << "    Setting image.";
             job.m_phrase->setPreview(image);
         }
