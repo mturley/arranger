@@ -19,30 +19,35 @@ public:
 public slots:
     void refresh();
 
-    const QString getName();
-    const QString getContent();
-    const QString getLOutput();
-    QPixmap* getPreviewPixmap();
+    const QString  name();
+    const QString  content();
+    const QString  stderr();
+          QPixmap* pixmap();
 
-    void setContent(QString);
-    void setLOutput(QString);
-    void setFlag(PreviewFlag);
+    void setName   (const QString);
+    void setContent(const QString);
+    void setStderr (const QString);
+    void setFlag   (const PreviewFlag);
+    void setImage  (QImage*);
+
     bool testFlag(PreviewFlag);
+    void unsetFlag(PreviewFlag);
     void clearFlags();
 
-    void setPreview(QImage*);
+    QString getDisplayLy();
 signals:
-    void loutputChanged();
-    void previewChanged();
+    void stderrChanged();
+    void pixmapChanged();
 
 private:
-    QString      m_name;             // the name of this phrase
-    QString      m_content;          // the musical content
-    QString      m_loutput;          // lilypond output
-    bool         m_relative_flag;    // notes are relative or absolute
-    QString      m_relative_note;    // relative note [a-g](is|es)('*|,*)
-    PreviewFlags m_preview_flags;    // state of the preview
-    QImage*      m_preview;          // preview image of the phrase
+    QString      m_name;          // the name of this phrase
+    QString      m_content;       // the musical content
+    QString      m_stderr;        // lilypond output
+    bool         m_relative_flag; // notes are relative or absolute
+    QString      m_relative_note; // relative note [a-g](is|es)('*|,*)
+    PreviewFlags m_preview_flags; // state of the preview
+    QPixmap*     m_pixmap;
+    QImage* volatile      m_image;         // preview image of the phrase
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Phrase::PreviewFlags)
 

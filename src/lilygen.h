@@ -8,6 +8,7 @@
 #include <QProcess>
 #include <QThread>
 #include <QSemaphore>
+#include <cstdlib>
 
 #include "phrase.h"
 
@@ -15,8 +16,11 @@ class LilyGen : public QThread {
     Q_OBJECT
 private:
     struct LilyJob {
-        LilyJob(Phrase* a_phrase) : m_phrase(a_phrase) { }
+        LilyJob(Phrase* a_phrase)
+            : m_id(rand()),
+              m_phrase(a_phrase) { }
 
+        int m_id;
         Phrase* m_phrase;
     };
 
@@ -25,16 +29,17 @@ public:
 
 private:
     static LilyGen* Inst();
-    LilyGen(QObject* parent = 0);
+    LilyGen();
 
     void enqueueJob(LilyJob);
     QString genFileContent(QString);
 
 private:
     void run();
-    bool writeFile(const QString,QString);
-    bool startProc(const QString,QStringList);
-    void updateJob(LilyJob&);
+    bool processPhraseJob(LilyJob&);
+    bool createPhraseLy(QString,Phrase*);
+    bool createPng(QString,int);
+    bool loadPng(QString,Phrase*);
 
 
 private:

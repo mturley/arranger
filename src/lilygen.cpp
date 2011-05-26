@@ -14,8 +14,7 @@ LilyGen* LilyGen::Inst() {
     return m_instance;
 }
 
-LilyGen::LilyGen(QObject* parent) {
-    //m_sem_main.
+LilyGen::LilyGen() {
     start();
 }
 
@@ -37,84 +36,95 @@ void LilyGen::run() {
     m_proc = new QProcess();
     while(true) {
         qDebug() << "Locking" << m_sem_main.available();
+
         // try to acquire all available resources
         if(m_sem_main.available() > 0)
             m_sem_main.acquire(m_sem_main.available());
         else
             m_sem_main.acquire();
 
-        qDebug() << "    Any more jobs?";
-        if(m_queue.count() <= 0)
+        // make sure there's something left to do
+        if(m_queue.count() <= 0) {
+            qDebug() << "    No more jobs";
             continue;
-
-        qDebug() << "Getting next job...";
-        // pop!
-        LilyJob job = m_queue.head();
-        m_queue.removeFirst();
-        // needs to be here because of goto's
-        QString filename = job.m_phrase->getName() + ".ly";
-        qDebug() << "    " << job.m_phrase->getName();
-
-        qDebug() << "    Is job already done?";
-        if(job.m_phrase->testFlag(Phrase::Recent))
-            goto done;
-
-        qDebug() << "    Set loading flag";
-        job.m_phrase->setFlag(Phrase::Loading);
-
-        qDebug() << "    Writing file...";
-        if(!writeFile(filename,genFileContent(job.m_phrase->getContent())))
-            goto done;
-
-        qDebug() << "    Starting process...";
-        if(!startProc("./fragment-gen.py",QStringList() << "-r 100" << filename << job.m_phrase->getName()))
-            goto done;
-
-        updateJob(job);
-
-        qDebug() << "    Script error?";
-        if(m_proc->exitCode() != 0)
-            goto done;
-
-        // load image
-        // braces to indicate scope (avoids cross initilization error)
-        // ps, can't load QPixmap outside of GUI thread, so using QImage
-        {
-            qDebug() << "    Loading image...";
-            QImage* image = new QImage();
-            if(!image->load(job.m_phrase->getName() + ".png")) {
-                qDebug() << "    Load failed!";
-                break;
-            }
-            qDebug() << "    Setting image.";
-            job.m_phrase->setPreview(image);
         }
 
-        done:
+        // jobs need doing! get started.
+        LilyJob job = m_queue.head();
+        m_queue.removeFirst();
+        processPhraseJob(job);
+
         qDebug() << "    Unlocking";
         m_sem_main.release();
     }
 }
 
-bool LilyGen::writeFile(const QString filename,QString content) {
+bool LilyGen::processPhraseJob(LilyJob& job) {
+    qDebug() << "Getting next job..." << job.m_phrase->name();
+    QString id;
+    id += QString::number(job.m_id);
+
+    if(job.m_phrase->testFlag(Phrase::Recent)) {
+        qDebug() << "    Job already done";
+        return false;
+    }
+
+    job.m_phrase->clearFlags();
+    job.m_phrase->setFlag(Phrase::Loading);
+
+    if(!createPhraseLy(id,job.m_phrase))
+        goto error;
+
+    if(!createPng(id,100))
+        goto error;
+
+    if(!loadPng(id,job.m_phrase))
+        goto error;
+
+    goto done;
+
+error:
+    qDebug() << "    An error occurred!";
+    job.m_phrase->setFlag(Phrase::Error);
+done:
+    qDebug() << "    Removing" << id + ".ly" << QFile(id+".ly").remove();
+    qDebug() << "    Removing" << id + ".png" << QFile(id+".png").remove();
+    job.m_phrase->unsetFlag(Phrase::Loading);
+    job.m_phrase->setFlag(Phrase::Recent);
+
+    return true;
+}
+
+// create a lilypond file for a Phrase
+// this should probably be generalized later
+bool LilyGen::createPhraseLy(QString id, Phrase* phrase) {
+    qDebug() << "    Writing file..." << id;
+
     QDir::setCurrent(QDir::currentPath().append("/images"));
-    QFile file(filename);
+    QFile file(id + ".ly");
 
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qDebug() << "        Unable to create file:" << filename;
+        qDebug() << "        Unable to create file:" << id + ".ly";
         return false;
     }
 
     QTextStream out(&file);
-    out << content;
+    out << phrase->getDisplayLy();
     qDebug() << "    Closing file";
     file.close();
 
     return true;
 }
 
-bool LilyGen::startProc(const QString proc, QStringList args) {
-    m_proc->start(proc,args);
+// create a png file from a previously generated lilypond file
+bool LilyGen::createPng(QString id, int resolution = 100) {
+    qDebug() << "    Creating png...";
+
+    QStringList args;
+    args << "-r " + QString::number(resolution)<< id + ".ly" << id;
+
+    qDebug() << "    ./fragment-gen.py" << args;
+    m_proc->start("./fragment-gen.py",args);
 
     if(!(m_proc->waitForStarted(1000))) {
         qDebug() << "        Timeout: process failed to start!";
@@ -126,41 +136,24 @@ bool LilyGen::startProc(const QString proc, QStringList args) {
         qDebug() << "        Timeout: process failed to finish!";
         return false;
     }
+
+    if(m_proc->exitCode())
+        return false;
+
     return true;
 }
 
-void LilyGen::updateJob(LilyJob& job) {
-    qDebug() << "    Set loutput";
-    job.m_phrase->setLOutput(m_proc->readAllStandardError());
-    qDebug() << "    Clear flags";
-    job.m_phrase->clearFlags();
+// load a previously created png file and update the phrase
+bool LilyGen::loadPng(QString id,Phrase* phrase) {
+    qDebug() << "    Loading png...";
 
-    // set flags
-    qDebug() << "    Set flags";
-    switch(m_proc->exitCode()) {
-        case  0: job.m_phrase->setFlag(Phrase::Recent); break;
-        default: job.m_phrase->setFlag(Phrase::Error);  break;
+    QImage* image = new QImage();
+    if(!image->load(id + ".png")) {
+        qDebug() << "        Load failed!" << id;
+        return false;
     }
-}
+    qDebug() << "    Setting image.";
+    phrase->setImage(image);
 
-QString LilyGen::genFileContent(QString block) {
-    // this function needs a lot of work
-    // but this should suffice for now :/
-
-    if(block == "")
-        block = "s1";
-
-    QString result = "\\version \"2.8.1\"\n";
-    //result.append(   "\\header {\n");
-    //result.append(   "  tagline = \"\"\n");
-    //result.append(   "}\n");
-    result.append(   "\\paper {\n");
-    result.append(   "  ragged-right = ##t\n");
-    result.append(   "  indent = 0.0\\mm\n");
-    //result.append(   "  line-width = 100\\pt\n");
-    result.append(   "}\n");
-
-    result.append("{").append(block).append("}\n");
-
-    return result;
+    return true;
 }

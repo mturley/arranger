@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     QGraphicsScene scene(0,0,300,300);
     w.ui->graphicsView->setScene(&scene);
 
-    PhraseEditor* pe1 = new PhraseEditor(&p1);
+    PhraseEditor* pe1 = new PhraseEditor(&p3);
 
     w.ui->graphicsView->scene()->addItem(pe1);
 

@@ -10,13 +10,13 @@ PhraseEditor::PhraseEditor(Phrase* a_phrase,QGraphicsObject *parent)
     m_text_edit    = new QTextEdit();
     m_text_edit_proxy = new QGraphicsProxyWidget(this);
 
-    m_item_name->setText(m_phrase->getName());
+    m_item_name->setText(m_phrase->name());
     updatePixmap();
-    m_text_edit->setText(m_phrase->getContent());
+    m_text_edit->setText(m_phrase->content());
     m_text_edit_proxy->setWidget(m_text_edit);
 
     connect(m_text_edit,SIGNAL(textChanged()),this,SLOT(updateContent()));
-    connect(m_phrase,SIGNAL(previewChanged()),this,SLOT(updatePixmap()));
+    connect(m_phrase,SIGNAL(pixmapChanged()),this,SLOT(updatePixmap()));
 }
 
 QRectF PhraseEditor::boundingRect() const {
@@ -24,13 +24,11 @@ QRectF PhraseEditor::boundingRect() const {
                       m_item_pixmap->pixmap().height());
 }
 
-void PhraseEditor::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+void PhraseEditor::paint(QPainter*,const QStyleOptionGraphicsItem*,QWidget*) {
 }
 
 void PhraseEditor::updatePixmap() {
-    qDebug() << "update pixmap!";
-
-    m_item_pixmap->setPixmap(*m_phrase->getPreviewPixmap());
+    m_item_pixmap->setPixmap(*m_phrase->pixmap());
 
     // horizontal layout
     m_item_name->setX(0 + m_item_pixmap->boundingRect().width()/2 - m_item_name->boundingRect().width()/2);
@@ -43,6 +41,8 @@ void PhraseEditor::updatePixmap() {
 
 void PhraseEditor::updateContent() {
     QString content = m_text_edit->toPlainText();
+    if(m_phrase->content() == content.trimmed())
+        return;
     m_phrase->setContent(m_text_edit->toPlainText());
     m_phrase->refresh();
 }
