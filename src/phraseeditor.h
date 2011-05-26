@@ -1,11 +1,13 @@
 #ifndef PHRASEEDITOR_H
 #define PHRASEEDITOR_H
 
-#include "phrase.h"
-#include <QGraphicsPixmapItem>
 #include <QGraphicsObject>
-#include <QTextEdit>
-#include <QGraphicsProxyWidget>
+
+class QGraphicsSimpleTextItem;
+class QGraphicsPixmapItem;
+class QTextEdit;
+class QGraphicsProxyWidget;
+class Phrase;
 
 class PhraseEditor : public QGraphicsObject {
     Q_OBJECT

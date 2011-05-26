@@ -1,6 +1,11 @@
 #include "phraseeditor.h"
-#include <QPainter>
+
 #include <QDebug>
+#include <QGraphicsProxyWidget>
+#include <QTextEdit>
+
+#include "phrase.h"
+
 
 PhraseEditor::PhraseEditor(Phrase* a_phrase,QGraphicsObject *parent)
     : QGraphicsObject(parent),

@@ -1,7 +1,7 @@
 #ifndef IDISPLAYABLE_H
 #define IDISPLAYABLE_H
 
-#include <QString>
+class QString;
 
 // implement IDisplayable if a class needs to be able
 // to display itself lilypond data

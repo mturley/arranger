@@ -1,11 +1,14 @@
 #ifndef PHRASE_H
 #define PHRASE_H
 
-#include <QImage>
-#include <QPixmap>
+#include <QObject>
+#include <QString>
+
 #include "idisplayable.h"
 #include "content.h"
 
+class QImage;
+class QPixmap;
 class Voice;
 
 class Phrase : public QObject, public IDisplayable {
@@ -48,7 +51,7 @@ public:
     const QString  name();
     const QString  content();
     const QString  stderr();
-          QPixmap* pixmap();
+                 QPixmap* pixmap();
 
     bool testFlag(PreviewFlag);
     void unsetFlag(PreviewFlag);
@@ -68,8 +71,7 @@ private:
     bool         m_relative_flag; // notes are relative or absolute
     QString      m_relative_note; // relative note [a-g](is|es)('*|,*)
     PreviewFlags m_preview_flags; // state of the preview
-    QPixmap*     m_pixmap;
-    QImage* volatile      m_image;         // preview image of the phrase
+    QImage*      m_image;         // preview image of the phrase
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Phrase::PreviewFlags)
 

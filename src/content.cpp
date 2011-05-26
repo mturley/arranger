@@ -2,7 +2,7 @@
 
 #include <QStringList>
 
-void Content::setContent(const QString content) {
+void Content::setContent(const QString& content) {
     m_content = content;
 }
 

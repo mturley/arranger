@@ -1,10 +1,12 @@
 #include "lilygen.h"
-#include <QFile>
-#include <QDir>
-#include <QTextStream>
+
 #include <QDebug>
-#include <QPixmap>
-#include <QImageReader>
+#include <QDir>
+#include <QFile>
+#include <QImage>
+#include <QProcess>
+
+#include "phrase.h"
 
 LilyGen* LilyGen::m_instance = NULL;
 
@@ -97,7 +99,7 @@ done:
 
 // create a lilypond file for a Phrase
 // this should probably be generalized later
-bool LilyGen::createPhraseLy(QString id, Phrase* phrase) {
+bool LilyGen::createPhraseLy(const QString& id, Phrase* phrase) {
     qDebug() << "    Writing file..." << id;
 
     QDir::setCurrent(QDir::currentPath().append("/images"));
@@ -117,7 +119,7 @@ bool LilyGen::createPhraseLy(QString id, Phrase* phrase) {
 }
 
 // create a png file from a previously generated lilypond file
-bool LilyGen::createPng(QString id, int resolution = 100) {
+bool LilyGen::createPng(const QString& id, int resolution = 100) {
     qDebug() << "    Creating png...";
 
     QStringList args;
@@ -144,7 +146,7 @@ bool LilyGen::createPng(QString id, int resolution = 100) {
 }
 
 // load a previously created png file and update the phrase
-bool LilyGen::loadPng(QString id,Phrase* phrase) {
+bool LilyGen::loadPng(const QString& id,Phrase* phrase) {
     qDebug() << "    Loading png...";
 
     QImage* image = new QImage();

@@ -1,17 +1,26 @@
 #ifndef LILYGEN_H
 #define LILYGEN_H
 
-#include <QDebug>
-#include <QQueue>
-#include <QString>
-#include <QImage>
-#include <QProcess>
-#include <QThread>
-#include <QSemaphore>
 #include <cstdlib>
 
-#include "phrase.h"
+#include <QQueue>
+#include <QSemaphore>
+#include <QString>
+#include <QThread>
 
+class QProcess;
+class Phrase;
+
+// LilyGen follows the singleton pattern but its only public functions are
+// static. Use LilyGen to refresh the image of displayable objects.
+//
+// Right now only Phrase objects are supported.
+//
+// Example usage:
+//
+//   Phrase phrase = new Phrase(...);
+//   LilyGen::refreshPreview(&phrase);
+//
 class LilyGen : public QThread {
     Q_OBJECT
 private:
@@ -32,22 +41,30 @@ private:
     LilyGen();
 
     void enqueueJob(LilyJob);
-    QString genFileContent(QString);
 
 private:
     void run();
-    bool processPhraseJob(LilyJob&);
-    bool createPhraseLy(QString,Phrase*);
-    bool createPng(QString,int);
-    bool loadPng(QString,Phrase*);
 
+    bool processPhraseJob(LilyJob&);
+    bool createPhraseLy(const QString&,Phrase*);
+    bool createPng(const QString&,int);
+    bool loadPng(const QString&,Phrase*);
 
 private:
+    // Singleton instance of the LilyGen class
     static LilyGen* m_instance;
-    QSemaphore m_sem_main;
 
+    // This semaphore is used to control the
+    // looping of the run() function
+    QSemaphore      m_sem_main;
+
+    // A queue of LilyJobs that need processing.
+    // Add to queue with enqueueJob()
     QQueue<LilyJob> m_queue;
-    QProcess* m_proc;
+
+    // Process used in the run() loop to generate
+    // png files from lilypond files
+    QProcess*       m_proc;
 };
 
 #endif // LILYGEN_H

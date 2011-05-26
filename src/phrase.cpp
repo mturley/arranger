@@ -1,8 +1,10 @@
 #include "phrase.h"
 
+#include <QDebug>
+#include <QPixmap>
+
 #include "voice.h"
 #include "lilygen.h"
-#include <QDebug>
 
 Phrase::Phrase(QString a_name,
                QString a_content,
@@ -10,7 +12,6 @@ Phrase::Phrase(QString a_name,
     QObject(parent),
     m_name(a_name),
     m_content(a_content),
-    m_pixmap(0),
     m_image(0) { }
 Phrase::~Phrase() {
 }
