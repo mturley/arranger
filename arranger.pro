@@ -15,12 +15,15 @@ SOURCES += \
     src/mainwindow.cpp \
     src/phrase.cpp \
     src/lilygen.cpp \
-    src/phraseeditor.cpp
+    src/phraseeditor.cpp \
+    src/voice.cpp
 
 HEADERS += \
     src/mainwindow.h \
     src/phrase.h \
     src/lilygen.h \
-    src/phraseeditor.h
+    src/phraseeditor.h \
+    src/idisplayable.h \
+    src/voice.h
 
 FORMS   += ui/mainwindow.ui

@@ -4,7 +4,7 @@
 
 Phrase::Phrase(QString a_name,
                QString a_content,
-               QObject* parent) :
+               Voice* parent) :
     QObject(parent),
     m_name(a_name),
     m_content(a_content),
@@ -79,20 +79,9 @@ void Phrase::setImage(QImage* image) {
 }
 
 QString Phrase::getDisplayLy() {
-    // this function needs a lot of work
-    // but this should suffice for now :/
+    return QString(displayTemplate()).arg(m_content);
+}
 
-    if(m_content == "")
-        m_content = "s1";
-
-    QString result = "\\version \"2.8.1\"\n";
-    result.append(   "\\paper {\n");
-    result.append(   "  ragged-right = ##t\n");
-    result.append(   "  indent = 0.0\\mm\n");
-    //result.append(   "  line-width = 100\\pt\n");
-    result.append(   "}\n");
-
-    result.append("{").append(m_content).append("}\n");
-
-    return result;
+QString Phrase::getWriteLy() {
+    return QString(writeTemplate()).arg(m_name,m_relative_note,m_content);
 }

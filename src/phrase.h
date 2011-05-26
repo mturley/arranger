@@ -3,9 +3,23 @@
 
 #include <QImage>
 #include <QPixmap>
+#include "idisplayable.h"
+#include "voice.h"
 
-class Phrase : public QObject {
+class Phrase : public QObject, public IDisplayable {
     Q_OBJECT
+private:
+    static const char* displayTemplate() {
+        return "\\version \"2.8.1\"\n"
+               "\\paper {\n"
+               "  ragged-right = ##t\n"
+               "  indent = 0.0\\mm\n"
+               "}\n"
+               "{%1}";
+    }
+    static const char* writeTemplate() {
+        return "%1 = \\relative %2 {\n%3\n}";
+    }
 public:
     enum PreviewFlag {
         Recent  = 0x1,          // is preview up to date?
@@ -14,15 +28,11 @@ public:
     };
     Q_DECLARE_FLAGS(PreviewFlags,PreviewFlag)
 
-    Phrase(QString,QString = "",QObject* = 0);
+    Phrase(QString,QString = "",Voice* = 0);
     ~Phrase();
+
 public slots:
     void refresh();
-
-    const QString  name();
-    const QString  content();
-    const QString  stderr();
-          QPixmap* pixmap();
 
     void setName   (const QString);
     void setContent(const QString);
@@ -30,11 +40,19 @@ public slots:
     void setFlag   (const PreviewFlag);
     void setImage  (QImage*);
 
+public:
+    const QString  name();
+    const QString  content();
+    const QString  stderr();
+          QPixmap* pixmap();
+
     bool testFlag(PreviewFlag);
     void unsetFlag(PreviewFlag);
     void clearFlags();
 
     QString getDisplayLy();
+    QString getWriteLy();
+
 signals:
     void stderrChanged();
     void pixmapChanged();
