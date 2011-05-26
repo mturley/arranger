@@ -3,6 +3,9 @@
 
 #include <QObject>
 #include "idisplayable.h"
+#include "content.h"
+
+class Phrase;
 
 class Voice : public QObject, public IDisplayable {
     Q_OBJECT
@@ -20,8 +23,14 @@ private:
         return "%1 = \\new Voice %2 {\n%3\n}";
     }
 public:
-    QString getDisplayLy();
-    QString getWriteLy();
+    Voice(QString name) : m_name(name), m_content("") {}
+    QString getDisplayLy() const;
+    QString getWriteLy() const;
+
+private:
+    QString        m_name;
+    Content        m_content;
+    QList<Phrase*> m_phrases; // available phrases
 };
 
 #endif // VOICE_H

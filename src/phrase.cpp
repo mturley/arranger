@@ -1,4 +1,6 @@
 #include "phrase.h"
+
+#include "voice.h"
 #include "lilygen.h"
 #include <QDebug>
 
@@ -22,7 +24,7 @@ const QString Phrase::name() {
 }
 
 const QString Phrase::content() {
-    return m_content;
+    return m_content.getDisplayLy();
 }
 
 const QString Phrase::stderr() {
@@ -31,19 +33,19 @@ const QString Phrase::stderr() {
 
 QPixmap* Phrase::pixmap() {
     QPixmap* pixmap = new QPixmap();
-    if(pixmap->convertFromImage(*m_image))
-        return pixmap;
-    return new QPixmap();
+    if(!m_image)
+        return new QPixmap();
+    if(!pixmap->convertFromImage(*m_image))
+        return new QPixmap();
+    return pixmap;
 }
 
 void Phrase::setName(const QString name) {
     m_name = name;
 }
 
-void Phrase::setContent(QString a_content) {
-    m_content = a_content;
-    // maybe this should be an emit statement
-    // but for now this'll do
+void Phrase::setContent(const QString content) {
+    m_content.setContent(content);
     m_preview_flags &= ~Recent;
 }
 
@@ -78,10 +80,10 @@ void Phrase::setImage(QImage* image) {
     emit pixmapChanged();
 }
 
-QString Phrase::getDisplayLy() {
-    return QString(displayTemplate()).arg(m_content);
+QString Phrase::getDisplayLy() const {
+    return QString(displayTemplate()).arg(m_relative_note,m_content.getDisplayLy());
 }
 
-QString Phrase::getWriteLy() {
-    return QString(writeTemplate()).arg(m_name,m_relative_note,m_content);
+QString Phrase::getWriteLy() const {
+    return QString(writeTemplate()).arg(m_name,m_relative_note,m_content.getWriteLy());
 }

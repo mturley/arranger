@@ -11,34 +11,13 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    Phrase p1("Phrase I","c'8 d'8 c'8 e'8 f'2");
-    Phrase p2("Phrase II","c'4 d'4 e'4 f'4");
-    Phrase p3("Phrase III","cx'x4.( b'4.) e'8 e'4");
-    Phrase p4("Phrase IV","c'4 c'2 c'4");
+    Phrase phrase("PhraseIII","c4.( b4.)  e4 \n g8( a8 g8 a8 a4 a4)\n b4~ b8 b8( c8 g8\\( d'8\\) d8)");
+    phrase.refresh();
 
-    p3.refresh();
-    p1.refresh();
-    p2.refresh();
-
-    p4.refresh();
-    p4.refresh();
-    p4.refresh();
-    p4.refresh();
-
-    sleep(2);
-
-    p3.setContent("c'4.( b'4.) e'8 e'4");
-
-    p1.refresh();
-    p3.refresh();
-    p3.refresh();
-
-    sleep(2);
-
-    QGraphicsScene scene(0,0,300,300);
+    QGraphicsScene scene(0,0,600,300);
     w.ui->graphicsView->setScene(&scene);
 
-    PhraseEditor* pe1 = new PhraseEditor(&p3);
+    PhraseEditor* pe1 = new PhraseEditor(&phrase);
 
     w.ui->graphicsView->scene()->addItem(pe1);
 

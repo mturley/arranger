@@ -16,7 +16,8 @@ SOURCES += \
     src/phrase.cpp \
     src/lilygen.cpp \
     src/phraseeditor.cpp \
-    src/voice.cpp
+    src/voice.cpp \
+    src/content.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -24,6 +25,7 @@ HEADERS += \
     src/lilygen.h \
     src/phraseeditor.h \
     src/idisplayable.h \
-    src/voice.h
+    src/voice.h \
+    src/content.h
 
 FORMS   += ui/mainwindow.ui

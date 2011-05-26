@@ -13,6 +13,11 @@ PhraseEditor::PhraseEditor(Phrase* a_phrase,QGraphicsObject *parent)
     m_item_name->setText(m_phrase->name());
     updatePixmap();
     m_text_edit->setText(m_phrase->content());
+    QFont* font = new QFont();
+    font->setStyleHint(QFont::Monospace);
+    font->setFamily(font->defaultFamily());
+    font->setPointSize(10);
+    m_text_edit->setFont(*font);
     m_text_edit_proxy->setWidget(m_text_edit);
 
     connect(m_text_edit,SIGNAL(textChanged()),this,SLOT(updateContent()));
@@ -29,7 +34,6 @@ void PhraseEditor::paint(QPainter*,const QStyleOptionGraphicsItem*,QWidget*) {
 
 void PhraseEditor::updatePixmap() {
     m_item_pixmap->setPixmap(*m_phrase->pixmap());
-
     // horizontal layout
     m_item_name->setX(0 + m_item_pixmap->boundingRect().width()/2 - m_item_name->boundingRect().width()/2);
     m_text_edit_proxy->setX(0 + m_item_pixmap->boundingRect().width()/2 - m_text_edit_proxy->boundingRect().width()/2);
@@ -41,8 +45,10 @@ void PhraseEditor::updatePixmap() {
 
 void PhraseEditor::updateContent() {
     QString content = m_text_edit->toPlainText();
-    if(m_phrase->content() == content.trimmed())
-        return;
-    m_phrase->setContent(m_text_edit->toPlainText());
+
+    //if(!content.endsWith(' '))
+    //    return;
+
+    m_phrase->setContent(content);
     m_phrase->refresh();
 }
