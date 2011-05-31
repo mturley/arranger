@@ -31,7 +31,6 @@ HEADERS += \
     src/content.h \
     src/score.h \
     src/staff.h \
-    src/phraselistitem.h \
     src/phrasedelegate.h \
     src/phraselistmodel.h
 
