@@ -38,7 +38,7 @@ void PhraseEditor::paint(QPainter*,const QStyleOptionGraphicsItem*,QWidget*) {
 }
 
 void PhraseEditor::updatePixmap() {
-    m_item_pixmap->setPixmap(*m_phrase->pixmap());
+    m_item_pixmap->setPixmap(QPixmap::fromImage(*m_phrase->image()));
     // horizontal layout
     m_item_name->setX(0 + m_item_pixmap->boundingRect().width()/2 - m_item_name->boundingRect().width()/2);
     m_text_edit_proxy->setX(0 + m_item_pixmap->boundingRect().width()/2 - m_text_edit_proxy->boundingRect().width()/2);
