@@ -32,13 +32,10 @@ const QString Phrase::stderr() {
     return m_stderr;
 }
 
-QPixmap* Phrase::pixmap() {
-    QPixmap* pixmap = new QPixmap();
+const QImage* Phrase::image() {
     if(!m_image)
-        return new QPixmap();
-    if(!pixmap->convertFromImage(*m_image))
-        return new QPixmap();
-    return pixmap;
+        return new QImage();
+    return m_image;
 }
 
 void Phrase::setName(const QString name) {

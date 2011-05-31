@@ -48,10 +48,10 @@ public slots:
     void setImage  (QImage*);
 
 public:
-    const QString  name();
-    const QString  content();
-    const QString  stderr();
-                 QPixmap* pixmap();
+    const QString name();
+    const QString content();
+    const QString stderr();
+    const QImage* image();
 
     bool testFlag(PreviewFlag);
     void unsetFlag(PreviewFlag);
