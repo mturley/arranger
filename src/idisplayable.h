@@ -1,19 +1,15 @@
 #ifndef IDISPLAYABLE_H
 #define IDISPLAYABLE_H
 
-class QString;
+#include "icontent.h"
 
-// implement IDisplayable if a class needs to be able
-// to display itself lilypond data
-class IDisplayable {
+class QImage;
+
+class IDisplayable : public IContent {
 public:
     virtual ~IDisplayable() {}
-    // return lilypond output that can stand alone
-    // and be compiled to give a preview of a class
-    virtual QString getDisplayLy() const = 0;
-    // return lilypond output that is meant to work
-    // with other classes getDisplayLy
-    virtual QString getWriteLy() const = 0;
+
+    virtual void setImage(QImage*) = 0;
 };
 
 #endif // IDISPLAYABLE_H

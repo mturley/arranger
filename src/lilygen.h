@@ -3,10 +3,13 @@
 
 #include <cstdlib>
 
+#include <QImage>
 #include <QQueue>
 #include <QSemaphore>
 #include <QString>
 #include <QThread>
+
+#include "idisplayable.h"
 
 class QProcess;
 class Phrase;
@@ -24,31 +27,31 @@ class Phrase;
 class LilyGen : public QThread {
     Q_OBJECT
 private:
-    struct LilyJob {
-        LilyJob(Phrase* a_phrase)
+    struct Job {
+        Job(IDisplayable* displayable)
             : m_id(rand()),
-              m_phrase(a_phrase) { }
+            m_displayable(displayable) { }
 
         int m_id;
-        Phrase* m_phrase;
+        IDisplayable* m_displayable;
     };
 
 public:
-    static void refreshPreview(Phrase*);
+    static void refreshPreview(IDisplayable*);
 
 private:
     static LilyGen* Inst();
     LilyGen();
 
-    void enqueueJob(LilyJob);
+    void enqueueJob(Job);
 
 private:
     void run();
 
-    bool processPhraseJob(LilyJob&);
-    bool createPhraseLy(const QString&,Phrase*);
-    bool createPng(const QString&,int);
-    bool loadPng(const QString&,Phrase*);
+    bool    processJob(Job&);
+    bool    createLyFile(Job&,bool = true);
+    bool    createPngFile(Job&,int = 100);
+    QImage* loadPngFile(Job&);
 
 private:
     // Singleton instance of the LilyGen class
@@ -58,9 +61,9 @@ private:
     // looping of the run() function
     QSemaphore      m_sem_main;
 
-    // A queue of LilyJobs that need processing.
+    // A queue of Jobs that need processing.
     // Add to queue with enqueueJob()
-    QQueue<LilyJob> m_queue;
+    QQueue<Job> m_queue;
 
     // Process used in the run() loop to generate
     // png files from lilypond files

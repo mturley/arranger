@@ -6,17 +6,30 @@
 #include "voice.h"
 #include "lilygen.h"
 
-Phrase::Phrase(QString a_name,
-               QString a_content,
+Phrase::Phrase(QString name,
+               QString content,
                Voice* parent) :
     QObject(parent),
-    m_name(a_name),
-    m_content(a_content),
+    m_name(name),
+    m_content(content),
     m_image(0) { }
-Phrase::~Phrase() {
-}
 
+Phrase::~Phrase() { }
+
+/* Requests that the Image of this phrase be updated. If
+ * the Recent flag is set, calling refresh will have no
+ * effect.
+ *
+ *
+ *
+ */
 void Phrase::refresh() {
+    if(testFlag(Recent))
+        return;
+
+    clearFlags();
+    setFlag(Loading);
+
     LilyGen::refreshPreview(this);
 }
 
@@ -33,9 +46,16 @@ const QString Phrase::stderr() {
 }
 
 const QImage* Phrase::image() {
+    qDebug() << "Returning QImage* for" << m_name << ":" << m_image;
     if(!m_image)
         return new QImage();
     return m_image;
+}
+
+QSize Phrase::size() {
+    if(!m_image)
+        return QSize(100,20);
+    return m_image->size();
 }
 
 void Phrase::setName(const QString name) {
@@ -68,12 +88,15 @@ void Phrase::clearFlags() {
 }
 
 void Phrase::setImage(QImage* image) {
-    // save old image for the moment
-    QImage* temp = m_image;
+    clearFlags();
+    setFlag(Recent);
+    if(image->isNull())
+        setFlag(Error);
+
+    if(m_image)
+        delete m_image;
+
     m_image = image;
-    // delete old image if necessary
-    if(temp)
-        delete temp;
 
     emit pixmapChanged();
 }

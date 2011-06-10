@@ -2,6 +2,7 @@
 #define PHRASE_H
 
 #include <QObject>
+#include <QSize>
 #include <QString>
 
 #include "idisplayable.h"
@@ -52,6 +53,7 @@ public:
     const QString content();
     const QString stderr();
     const QImage* image();
+          QSize   size();
 
     bool testFlag(PreviewFlag);
     void unsetFlag(PreviewFlag);

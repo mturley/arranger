@@ -22,10 +22,10 @@ LilyGen::LilyGen() {
 
 // static refreshPreview
 // returns exit code, stores output in loutput, modifies flags, stores image in a_image
-void LilyGen::refreshPreview(Phrase* a_phrase) {
+void LilyGen::refreshPreview(IDisplayable* displayable) {
 
-    Inst()->m_queue.enqueue(LilyJob(a_phrase));
-    //qDebug() << "unlock from add";
+    Inst()->m_queue.enqueue(Job(displayable));
+
     if(Inst()->m_sem_main.available() == 0)
         Inst()->m_sem_main.release();
 }
@@ -47,115 +47,96 @@ void LilyGen::run() {
 
         // make sure there's something left to do
         if(m_queue.count() <= 0) {
-            qDebug() << "    No more jobs";
+            qDebug() << "\tNo more jobs";
             continue;
         }
 
         // jobs need doing! get started.
-        LilyJob job = m_queue.head();
+        Job job = m_queue.head();
         m_queue.removeFirst();
-        processPhraseJob(job);
 
-        qDebug() << "    Unlocking";
+        processJob(job);
+
+        qDebug() << "\tUnlocking 1";
         m_sem_main.release();
     }
 }
 
-bool LilyGen::processPhraseJob(LilyJob& job) {
-    qDebug() << "Getting next job..." << job.m_phrase->name();
-    QString id;
-    id += QString::number(job.m_id);
+bool LilyGen::processJob(Job& job) {
+    QString id = QString::number(job.m_id);
+    qDebug() << "Getting next job...\t" << id;
 
-    if(job.m_phrase->testFlag(Phrase::Recent)) {
-        qDebug() << "    Job already done";
-        return false;
-    }
+    if(!createLyFile(job) || !createPngFile(job))
+        qDebug() << "\tAn error occurred!";
 
-    job.m_phrase->clearFlags();
-    job.m_phrase->setFlag(Phrase::Loading);
+    job.m_displayable->setImage(loadPngFile(job));
 
-    if(!createPhraseLy(id,job.m_phrase))
-        goto error;
-
-    if(!createPng(id,100))
-        goto error;
-
-    if(!loadPng(id,job.m_phrase))
-        goto error;
-
-    goto done;
-
-error:
-    qDebug() << "    An error occurred!";
-    job.m_phrase->setFlag(Phrase::Error);
-done:
-    qDebug() << "    Removing" << id + ".ly" << QFile(id+".ly").remove();
-    qDebug() << "    Removing" << id + ".png" << QFile(id+".png").remove();
-    job.m_phrase->unsetFlag(Phrase::Loading);
-    job.m_phrase->setFlag(Phrase::Recent);
+    qDebug() << "\tRemoving\t" << id + ".ly"  << QFile(id+".ly").remove();
+    qDebug() << "\tRemoving\t" << id + ".png" << QFile(id+".png").remove();
 
     return true;
 }
 
-// create a lilypond file for a Phrase
-// this should probably be generalized later
-bool LilyGen::createPhraseLy(const QString& id, Phrase* phrase) {
-    qDebug() << "    Writing file..." << id;
+bool LilyGen::createLyFile(Job& job, bool display) {
+    QString id = QString::number(job.m_id);
+    QString filename = id + ".ly";
+    qDebug() << "\tCreating\t" << filename;
 
     QDir::setCurrent(QDir::currentPath().append("/images"));
-    QFile file(id + ".ly");
+    QFile file(filename);
 
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qDebug() << "        Unable to create file:" << id + ".ly";
+        qDebug() << "\t\tUnable to create file!";
         return false;
     }
 
     QTextStream out(&file);
-    out << phrase->getDisplayLy();
-    qDebug() << "    Closing file";
+    if(display)
+        out << job.m_displayable->getDisplayLy();
+    else
+        out << job.m_displayable->getWriteLy();
+
     file.close();
 
     return true;
 }
 
 // create a png file from a previously generated lilypond file
-bool LilyGen::createPng(const QString& id, int resolution = 100) {
-    qDebug() << "    Creating png...";
+bool LilyGen::createPngFile(Job& job, int resolution) {
+    QString id = QString::number(job.m_id);
+    QString filename = id + ".ly";
+    qDebug() << "\tCreating\t" << id + ".png";
 
     QStringList args;
-    args << "-r " + QString::number(resolution)<< id + ".ly" << id;
+    args << "-r " + QString::number(resolution) << filename << id;
 
-    qDebug() << "    ./fragment-gen.py" << args;
     m_proc->start("./fragment-gen.py",args);
 
     if(!(m_proc->waitForStarted(1000))) {
-        qDebug() << "        Timeout: process failed to start!";
+        qDebug() << "\t\tTimeout: process failed to start!";
         return false;
     }
-
-    qDebug() << "    Waiting for process to finish...";
     if(!(m_proc->waitForFinished(-1))) {
-        qDebug() << "        Timeout: process failed to finish!";
+        qDebug() << "\t\tTimeout: process failed to finish!";
         return false;
     }
-
-    if(m_proc->exitCode())
+    if(m_proc->exitCode()) {
+        qDebug() << "\t\tBad exit code!";
         return false;
+    }
 
     return true;
 }
 
 // load a previously created png file and update the phrase
-bool LilyGen::loadPng(const QString& id,Phrase* phrase) {
-    qDebug() << "    Loading png...";
+QImage* LilyGen::loadPngFile(Job& job) {
+    QString id = QString::number(job.m_id);
+    QString filename = id + ".png";
+    qDebug() << "\tLoading \t" << filename;
 
     QImage* image = new QImage();
-    if(!image->load(id + ".png")) {
-        qDebug() << "        Load failed!" << id;
-        return false;
-    }
-    qDebug() << "    Setting image.";
-    phrase->setImage(image);
+    if(!image->load(filename))
+        qDebug() << "\t\tLoad failed!";
 
-    return true;
+    return image;
 }

@@ -5,11 +5,12 @@
 
 #include "phrase.h"
 
-class PhraseListModel : QAbstractListModel {
+class PhraseListModel : public QAbstractListModel {
 public:
     enum Role {
         Name = Qt::UserRole + 1,
-        Image
+        Image,
+        Size
     };
 
     PhraseListModel(QObject* parent = 0);
@@ -18,6 +19,8 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
+
+    void append(Phrase*);
 
 private:
     QList<Phrase*> m_phrases;

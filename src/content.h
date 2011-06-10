@@ -3,9 +3,9 @@
 
 #include <QString>
 
-#include "idisplayable.h"
+#include "icontent.h"
 
-class Content : public IDisplayable {
+class Content : public IContent {
 public:
     Content(const QString& content) : m_content(content) { }
 
