@@ -17,9 +17,7 @@ SOURCES += \
     src/phrase.cpp \
     src/voice.cpp \
     src/lilygen.cpp \
-    src/phraseeditor.cpp \
-    src/phrasedelegate.cpp \
-    src/phraselistmodel.cpp
+    src/phrasewidget.cpp
 
 
 HEADERS += \
@@ -32,9 +30,7 @@ HEADERS += \
     src/staff.h \
     src/score.h \
     src/lilygen.h \
-    src/phraseeditor.h \
-    src/phrasedelegate.h \
-    src/phraselistmodel.h
+    src/phrasewidget.h
 
 
 FORMS   += ui/mainwindow.ui
