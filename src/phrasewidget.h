@@ -9,9 +9,15 @@
 #include "phrase.h"
 
 class PhraseWidget : public QWidget {
+    Q_OBJECT
 public:
     PhraseWidget(Phrase*,QWidget* parent = 0);
 
+    QSize sizeHint() const;
+signals:
+    void pixmapChanged();
+private slots:
+    void updatePixmap();
 private:
     Phrase*      m_phrase;
     QToolButton* m_refreshButton;

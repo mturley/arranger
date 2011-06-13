@@ -17,7 +17,8 @@ SOURCES += \
     src/phrase.cpp \
     src/voice.cpp \
     src/lilygen.cpp \
-    src/phrasewidget.cpp
+    src/phrasewidget.cpp \
+    src/phrasewidgetlistitem.cpp
 
 
 HEADERS += \
@@ -30,7 +31,8 @@ HEADERS += \
     src/staff.h \
     src/score.h \
     src/lilygen.h \
-    src/phrasewidget.h
+    src/phrasewidget.h \
+    src/phrasewidgetlistitem.h
 
 
 FORMS   += ui/mainwindow.ui
