@@ -19,7 +19,8 @@ SOURCES += \
     src/lilygen.cpp \
     src/phrasewidget.cpp \
     src/phrasewidgetlistitem.cpp \
-    src/phraseeditor.cpp
+    src/phraseeditor.cpp \
+    src/lilyhighlighter.cpp
 
 
 HEADERS += \
@@ -34,7 +35,8 @@ HEADERS += \
     src/lilygen.h \
     src/phrasewidget.h \
     src/phrasewidgetlistitem.h \
-    src/phraseeditor.h
+    src/phraseeditor.h \
+    src/lilyhighlighter.h
 
 
 FORMS   += ui/mainwindow.ui

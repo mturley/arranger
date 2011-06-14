@@ -45,15 +45,21 @@ void PhraseEditor::format() {
 
     // line breaks occur at lineValue >= 1
     float lineValue = 0;
+    int previousValue = 4;
     // matches a single note, capture note length
-    QRegExp note("[a-z](?:is|es){0,1}(?:'*|,*)(\\d+)[^a-z1-9]*");
+    // this is a rough approximation
+    QRegExp note("[a-z](?:is|es)?(?:'*|,*)(\\d+)?[^a-z1-9]*");
+    // matches a single note, unspecified note length
 
     result += "  ";
     for(int i = 0; i < symbols.size(); i++) {
         // find symbolValue
         qDebug() << symbols[i];
+        // if note matches the symbol
         if(note.indexIn(symbols[i]) >= 0) {
-            lineValue += 1.0/note.cap(1).toInt();
+            int noteValue = note.cap(1).toInt() > 0 ? note.cap(1).toInt() : previousValue;
+            lineValue += 1.0/noteValue;
+            previousValue = noteValue;
             qDebug() << "match";
         }
 
