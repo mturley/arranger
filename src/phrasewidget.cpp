@@ -14,6 +14,11 @@ PhraseWidget::PhraseWidget(Phrase* phrase,QWidget *parent)
     m_scrollArea    = new QScrollArea(this);
     m_pixmap        = new QLabel();
 
+    m_refreshButton->setIcon(QIcon::fromTheme("accessories-text-editor"));
+
+    m_name->setFixedWidth(100);
+    m_name->setText(m_phrase->name());
+
     m_scrollArea->setWidget(m_pixmap);
     m_scrollArea->setWidgetResizable(true);
     m_scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

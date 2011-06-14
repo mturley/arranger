@@ -1,6 +1,7 @@
 #include <QtGui/QApplication>
 #include <QGraphicsPixmapItem>
 #include <QListView>
+#include <QScrollBar>
 
 #include "mainwindow.h"
 #include "phrase.h"
@@ -14,10 +15,10 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    Phrase* phrase1 = new Phrase("PhraseI","c'1 b8 a g f e d c4");
-    Phrase* phrase2 = new Phrase("PhraseII","d2 e2( f4 c4 g8 a8 g4)");
-    Phrase* phrase3 = new Phrase("PhraseIII","e1");
-    Phrase* phrase4 = new Phrase("PhraseIV","f1");
+    Phrase* phrase1 = new Phrase("PhraseI","c'1 b8 a g f e d c4 d'2 e2( f4 c4 g8 a8 g4) d'2 e2( f4 c4 g8 a8 g4)");
+    Phrase* phrase2 = new Phrase("PhraseII","d2 e2( f4 c4 g8 a8 g4) c'1 b8 a g f e d c4 c'1 b8 a g f e d c4 d2 e2( f4 c4 g8 a8 g4)");
+    Phrase* phrase3 = new Phrase("PhraseIII","e8 e e e f g f e c' c c d c b a g");
+    Phrase* phrase4 = new Phrase("PhraseIV","f1~ f");
 
     phrase1->refresh();
     phrase2->refresh();
