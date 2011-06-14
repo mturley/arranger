@@ -66,7 +66,7 @@ bool LilyGen::processJob(Job& job) {
     QString id = QString::number(job.m_id);
     qDebug() << "Getting next job...\t" << id;
 
-    if(!createLyFile(job) || !createPngFile(job))
+    if(!createLyFile(job) || !createPngFile(job,80))
         qDebug() << "\tAn error occurred!";
 
     job.m_displayable->setImage(loadPngFile(job));

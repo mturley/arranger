@@ -37,6 +37,7 @@ public:
     Q_DECLARE_FLAGS(PreviewFlags,PreviewFlag)
 
     Phrase(QString,QString = "",Voice* = 0);
+    Phrase(const Phrase&);
     ~Phrase();
 
 public slots:
@@ -49,9 +50,9 @@ public slots:
     void setImage  (QImage*);
 
 public:
-    const QString name();
-    const QString content();
-    const QString stderr();
+    const QString name() const;
+    const QString content() const;
+    const QString stderr() const;
     const QImage* image();
           QSize   size();
 

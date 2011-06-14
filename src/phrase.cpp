@@ -8,11 +8,18 @@
 
 Phrase::Phrase(QString name,
                QString content,
-               Voice* parent) :
-    QObject(parent),
-    m_name(name),
-    m_content(content),
-    m_image(0) { }
+               Voice* parent)
+    : QObject(parent),
+      m_name(name),
+      m_content(content),
+      m_image(0) { }
+
+Phrase::Phrase(const Phrase& phrase)
+    : QObject(0),
+      m_name(phrase.name()),
+      m_content(phrase.content()),
+      m_image(0) {
+}
 
 Phrase::~Phrase() { }
 
@@ -33,15 +40,15 @@ void Phrase::refresh() {
     LilyGen::refreshPreview(this);
 }
 
-const QString Phrase::name() {
+const QString Phrase::name() const {
     return m_name;
 }
 
-const QString Phrase::content() {
+const QString Phrase::content() const {
     return m_content.getDisplayLy();
 }
 
-const QString Phrase::stderr() {
+const QString Phrase::stderr() const {
     return m_stderr;
 }
 

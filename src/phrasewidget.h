@@ -7,6 +7,7 @@
 #include <QWidget>
 
 #include "phrase.h"
+#include "phraseeditor.h"
 
 class PhraseWidget : public QWidget {
     Q_OBJECT
@@ -18,12 +19,15 @@ signals:
     void pixmapChanged();
 private slots:
     void updatePixmap();
+    void openEditor();
 private:
-    Phrase*      m_phrase;
-    QToolButton* m_refreshButton;
-    QLabel*      m_name;
-    QScrollArea* m_scrollArea;
-    QLabel*      m_pixmap;
+    PhraseEditor* m_phraseEditor;
+    Phrase*       m_phrase;
+
+    QToolButton*  m_refreshButton;
+    QLabel*       m_name;
+    QScrollArea*  m_scrollArea;
+    QLabel*       m_pixmap;
 };
 
 #endif // PHRASEWIDGET_H
