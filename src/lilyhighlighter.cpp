@@ -3,7 +3,18 @@
 LilyHighlighter::LilyHighlighter(QTextEdit *parent)
     : QSyntaxHighlighter(parent) {
 
-    m_notePattern = QRegExp("\\b[a-z](?:is|es)\\b");
+    HighlightingRule rule;
+
+    rule.pattern = QRegExp("");
+    rule.format = m_notenameFormat;
+    m_highlightingRules.append(rule);
+
+    rule.format = m_notedurationFormat;
+    m_highlightingRules.append(rule);
+
+    rule.format = m_articulationFormat;
+    m_highlightingRules.append(rule);
+
 }
 
 void LilyHighlighter::highlightBlock(const QString &text) {

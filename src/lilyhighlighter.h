@@ -17,9 +17,8 @@ private:
 
     QVector<HighlightingRule> m_highlightingRules;
 
-    QRegExp         m_notePattern;
-    QTextCharFormat m_numberFormat;
     QTextCharFormat m_notenameFormat;
+    QTextCharFormat m_notedurationFormat;
     QTextCharFormat m_articulationFormat;
 };
 
