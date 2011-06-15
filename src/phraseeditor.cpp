@@ -9,7 +9,7 @@ PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
     m_phrase = new Phrase(*phrase);
 
     m_relative   = new QCheckBox(this);
-    m_editor     = new QTextEdit(m_phrase->content(),this);
+    m_editor     = new QTextEdit(this);
     m_scrollArea = new QScrollArea(this);
     m_pixmap     = new QLabel();
 
@@ -21,6 +21,7 @@ PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
     m_editor->setFont(font);
 
     m_editor->setFixedWidth(200);
+    m_editor->setPlainText(m_phrase->content());
     format();
 
     m_scrollArea->setWidget(m_pixmap);
@@ -36,39 +37,68 @@ PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
 }
 
 void PhraseEditor::format() {
-    QString text = m_editor->toPlainText().trimmed();
+    QString text = m_phrase->content();
 
-    // split on whitespace
-    QStringList symbols = text.split(" ");
+    QStringList tokens;
 
-    QString result = "";
+    QString blockStart = "{[<";
+    QString blockEnd   = "}]>";
+    QString delimiters = " \n\r";
 
-    // line breaks occur at lineValue >= 1
-    float lineValue = 0;
-    int previousValue = 4;
-    // matches a single note, capture note length
-    // this is a rough approximation
-    QRegExp note("[a-z](?:is|es)?(?:'*|,*)(\\d+)?[^a-z1-9]*");
-    // matches a single note, unspecified note length
+    QString temp = "";
+    for(int i = 0; i < text.size(); i++) {
+        int startIndex = i;
 
-    result += "  ";
-    for(int i = 0; i < symbols.size(); i++) {
-        // find symbolValue
-        qDebug() << symbols[i];
-        // if note matches the symbol
-        if(note.indexIn(symbols[i]) >= 0) {
-            int noteValue = note.cap(1).toInt() > 0 ? note.cap(1).toInt() : previousValue;
-            lineValue += 1.0/noteValue;
-            previousValue = noteValue;
-            qDebug() << "match";
+        int delimiterType = delimiters.indexOf(text[i]);
+        if(delimiterType >= 0) {
+            if(temp.size() > 0)
+                tokens.append(temp);
+            temp.clear();
+            continue;
         }
 
-        result += symbols[i];
+        int blockType = blockStart.indexOf(text[i]);
+        if(blockType >= 0)
+            while(i < text.size() && text[i] != blockEnd[blockType]) i++;
+
+        temp += text.mid(startIndex,(i - startIndex) + 1);
+    }
+
+    QRegExp note("([a-g](?:(?:(?:sharp|is|s)){0,2}|(?:(?:flat|es|f)){0,2})[,']{0,4})(128|64|32|16|8|4|2|1)?");
+    QRegExp chord("<(.*)>(128|64|32|16|8|4|2|1)?");
+
+    float   lineValue = 0;
+    int     prevValue = 4;
+    QString result    = "  ";
+
+    for(int i = 0; i < tokens.size(); i++) {
+        qDebug() << tokens[i];
+
+        int noteValue = -1;
+
+        note.indexIn(tokens[i]);
+
+        if(chord.exactMatch(tokens[i])) {
+            noteValue = chord.cap(2).toInt();
+            noteValue = (noteValue > 0 ? noteValue : prevValue);
+
+            lineValue += 1.0/noteValue;
+            prevValue = noteValue;
+        }
+        else if(note.matchedLength() > 0) {
+            noteValue = note.cap(2).toInt();
+            noteValue = (noteValue > 0 ? noteValue : prevValue);
+
+            lineValue += 1.0/noteValue;
+            prevValue = noteValue;
+        }
+
+        result += tokens[i];
         result += " ";
 
         if(lineValue >= 1) {
-            result += "\n  ";
             lineValue = 0;
+            result += "\n  ";
         }
     }
 
