@@ -12,13 +12,15 @@ Phrase::Phrase(QString name,
     : QObject(parent),
       m_name(name),
       m_content(content),
-      m_image(0) { }
+      m_image(0),
+      m_preview_flags(0) { }
 
 Phrase::Phrase(const Phrase& phrase)
     : QObject(0),
       m_name(phrase.name()),
       m_content(phrase.content()),
-      m_image(0) {
+      m_image(0),
+      m_preview_flags(0) {
 }
 
 Phrase::~Phrase() { }
@@ -31,11 +33,11 @@ Phrase::~Phrase() { }
  *
  */
 void Phrase::refresh() {
-    if(testFlag(Recent))
+    if(testFlag(PreviewFlags::Recent))
         return;
 
     clearFlags();
-    setFlag(Loading);
+    setFlag(PreviewFlags::Loading);
 
     LilyGen::refreshPreview(this);
 }
@@ -53,7 +55,6 @@ const QString Phrase::stderr() const {
 }
 
 const QImage* Phrase::image() {
-    qDebug() << "Returning QImage* for" << m_name << ":" << m_image;
     if(!m_image)
         return new QImage();
     return m_image;
@@ -71,34 +72,35 @@ void Phrase::setName(const QString name) {
 
 void Phrase::setContent(const QString content) {
     m_content.setContent(content);
-    m_preview_flags &= ~Recent;
+    unsetFlag(PreviewFlags::Recent);
 }
 
 void Phrase::setStderr(QString stderr) {
     m_stderr = stderr;
 }
 
-void Phrase::setFlag(Phrase::PreviewFlag flag) {
-    m_preview_flags |= flag;
+void Phrase::setFlag(PreviewFlags::PreviewFlag flag) {
+    m_preview_flags |= (uint)flag;
 }
 
-bool Phrase::testFlag(PreviewFlag flag) {
-    return m_preview_flags.testFlag(flag);
+bool Phrase::testFlag(PreviewFlags::PreviewFlag flag) {
+    return m_preview_flags & flag != 0x0;
 }
 
-void Phrase::unsetFlag(PreviewFlag flag) {
-    m_preview_flags &= ~flag;
+void Phrase::unsetFlag(PreviewFlags::PreviewFlag flag) {
+    m_preview_flags &= ~(uint)flag;
 }
 
 void Phrase::clearFlags() {
     m_preview_flags &= 0x0;
 }
 
-void Phrase::setImage(QImage* image) {
+void Phrase::setImage(QImage* image) {    
     clearFlags();
-    setFlag(Recent);
+    setFlag(PreviewFlags::Recent);
+
     if(image->isNull())
-        setFlag(Error);
+        setFlag(PreviewFlags::Error);
 
     if(m_image)
         delete m_image;

@@ -37,9 +37,11 @@ void LilyGen::run() {
     // have to initialize in thread to avoid family issues
     m_proc = new QProcess();
     while(true) {
-        qDebug() << "Locking" << m_sem_main.available();
+        qDebug() << "Locking";
 
         // try to acquire all available resources
+        // the point of this is to put the thread to sleep
+        // when there are no jobs remaining
         if(m_sem_main.available() > 0)
             m_sem_main.acquire(m_sem_main.available());
         else
@@ -51,20 +53,23 @@ void LilyGen::run() {
             continue;
         }
 
-        // jobs need doing! get started.
+        // jobs need processing! get started.
         Job job = m_queue.head();
         m_queue.removeFirst();
 
-        processJob(job);
+        // only work on jobs that aren't Recent
+        bool recent = job.m_displayable->testFlag(PreviewFlags::Recent);
+        qDebug() << "\tRecent:" << recent;
+        if(!recent) processJob(job);
 
-        qDebug() << "\tUnlocking 1";
+        qDebug() << "\tUnlocking.\t" << m_queue.count() << "remaining";;
         m_sem_main.release();
     }
 }
 
 bool LilyGen::processJob(Job& job) {
     QString id = QString::number(job.m_id);
-    qDebug() << "Getting next job...\t" << id;
+    qDebug() << "\tJob id:\t" << id;
 
     if(!createLyFile(job) || !createPngFile(job,80))
         qDebug() << "\tAn error occurred!";

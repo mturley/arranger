@@ -3,38 +3,31 @@
 #include <QDebug>
 
 LilyHighlighter::LilyHighlighter(QTextEdit *parent)
-    : QSyntaxHighlighter(parent) {
-
-    HighlightingRule rule;
-
-    m_notenameFormat.setForeground(Qt::gray);
-    rule.format = m_notenameFormat;
-    m_highlightingRules.append(rule);
-
-    rule.format = m_notedurationFormat;
-    m_highlightingRules.append(rule);
-
-    rule.format = m_articulationFormat;
-    m_highlightingRules.append(rule);
-
-}
+    : QSyntaxHighlighter(parent) { }
 
 void LilyHighlighter::highlightBlock(const QString &text) {
     //qDebug() << "highlightBlock";
-    QRegExp lilyNote("([a-g](?:(?:(?:sharp|is|s)){0,2}|(?:(?:flat|es|f)){0,2}))([,']{0,4})(128|64|32|16|8|4|2|1)?");
+    QRegExp lilyNote("\\b([a-g](?:(?:(?:sharp|is|s)){0,2}|(?:(?:flat|es|f)){0,2}))([,']{0,4})?(128|64|32|16|8|4|2|1)?");
 
     QTextCharFormat name;
     QTextCharFormat position;
     QTextCharFormat duration;
+    QTextCharFormat unrecognized;
 
     name.setForeground(Qt::black);
     duration.setFontWeight(3);
 
     position.setForeground(Qt::darkRed);
 
-    duration.setForeground(Qt::blue);
+    duration.setForeground(QBrush(QColor(0,0,255,150)));
     duration.setFontWeight(5);
 
+    unrecognized.setBackground(QBrush(QColor(255,0,0,100)));
+
+    QRegExp whiteSpace("\\s+");
+    for(int i = 0; i < text.size(); i++)
+        if(text[i] != ' ')
+            setFormat(i,1,unrecognized);
 
     int pos = 0;
 
