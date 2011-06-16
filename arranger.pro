@@ -20,7 +20,11 @@ SOURCES += \
     src/phrasewidget.cpp \
     src/phrasewidgetlistitem.cpp \
     src/phraseeditor.cpp \
-    src/lilyhighlighter.cpp
+    src/lilyhighlighter.cpp \
+    src/phraselistmodel.cpp \
+    src/phraselistdelegate.cpp \
+    src/score.cpp \
+    src/staff.cpp
 
 
 HEADERS += \
@@ -36,7 +40,13 @@ HEADERS += \
     src/phrasewidget.h \
     src/phrasewidgetlistitem.h \
     src/phraseeditor.h \
-    src/lilyhighlighter.h
+    src/lilyhighlighter.h \
+    src/phraselistmodel.h \
+    src/phraselistdelegate.h \
+    src/iscoretreeitem.h \
+    src/projectmodel.h \
+    src/iparentitem.h \
+    src/ichilditem.h
 
 
 FORMS   += ui/mainwindow.ui

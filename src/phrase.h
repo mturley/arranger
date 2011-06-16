@@ -6,13 +6,16 @@
 #include <QString>
 
 #include "idisplayable.h"
+#include "ichilditem.h"
 #include "content.h"
 
 class QImage;
 class QPixmap;
 class Voice;
 
-class Phrase : public QObject, public IDisplayable {
+class Phrase : public QObject,
+               public IDisplayable,
+               public IChildItem {
     Q_OBJECT
 private:
     static const char* displayTemplate() {
@@ -43,6 +46,9 @@ public slots:
     void setImage  (QImage*);
 
 public:
+    ChildType::Type type();
+    IParentItem* parent();
+
     const QString name() const;
     const QString content() const;
     const QString stderr() const;
@@ -61,6 +67,7 @@ signals:
     void pixmapChanged();
 
 private:
+    Voice*       m_parent;
     QString      m_name;          // the name of this phrase
     Content      m_content;       // the musical content
     QString      m_stderr;        // lilypond output

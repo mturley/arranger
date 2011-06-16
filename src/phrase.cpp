@@ -12,15 +12,15 @@ Phrase::Phrase(QString name,
     : QObject(parent),
       m_name(name),
       m_content(content),
-      m_image(0),
-      m_preview_flags(0) { }
+      m_preview_flags(0),
+      m_image(0) { }
 
 Phrase::Phrase(const Phrase& phrase)
     : QObject(0),
       m_name(phrase.name()),
       m_content(phrase.content()),
-      m_image(0),
-      m_preview_flags(0) {
+      m_preview_flags(0),
+      m_image(0) {
 }
 
 Phrase::~Phrase() { }
@@ -85,7 +85,7 @@ void Phrase::setFlag(PreviewFlags::PreviewFlag flag) {
 }
 
 bool Phrase::testFlag(PreviewFlags::PreviewFlag flag) {
-    return m_preview_flags & flag != 0x0;
+    return (m_preview_flags & flag) != 0x0;
 }
 
 void Phrase::unsetFlag(PreviewFlags::PreviewFlag flag) {

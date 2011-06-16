@@ -3,11 +3,16 @@
 
 #include <QObject>
 #include "idisplayable.h"
+#include "iparentitem.h"
+#include "ichilditem.h"
 #include "content.h"
 
 class Phrase;
 
-class Voice : public QObject, public IDisplayable {
+class Voice : public QObject,
+              public IDisplayable,
+              public IParentItem,
+              public IChildItem {
     Q_OBJECT
 private:
     static const char* displayTemplate() {
@@ -24,6 +29,11 @@ private:
     }
 public:
     Voice(QString name) : m_name(name), m_content("") {}
+
+    ChildType::Type type();
+    bool append(IChildItem*);
+    IChildItem* child(int) const;
+
     QString getDisplayLy() const;
     QString getWriteLy() const;
 
