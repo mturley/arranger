@@ -10,10 +10,40 @@ PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
 
     m_phrase = new Phrase(*phrase);
 
-    m_relative   = new QCheckBox(this);
-    m_editor     = new QTextEdit(this);
-    m_scrollArea = new QScrollArea(this);
-    m_pixmap     = new QLabel();
+    m_relative      = new QCheckBox();
+    m_autoRefresh   = new QCheckBox();
+
+    m_name          = new QLabel("- " + m_phrase->name() + " -");
+    m_refreshButton = new QToolButton();
+    m_formatButton  = new QToolButton();
+
+    m_editor        = new QTextEdit();
+    m_scrollArea    = new QScrollArea();
+    m_pixmap        = new QLabel();
+
+    init();
+    layout();
+
+    connect(m_refreshButton,SIGNAL(clicked()),m_phrase,SLOT(refresh()));
+    connect(m_formatButton,SIGNAL(clicked()),this,SLOT(format()));
+
+    connect(m_editor,SIGNAL(textChanged()),this,SLOT(onTextChanged()));
+    connect(m_phrase,SIGNAL(pixmapChanged()),this,SLOT(updatePixmap()));
+    connect(&m_refreshTimer,SIGNAL(timeout()),m_phrase,SLOT(refresh()));
+}
+
+void PhraseEditor::init() {
+    m_refreshTimer.setSingleShot(true);
+
+    m_relative->setText("Relative");
+    m_relative->setChecked(true);
+    m_autoRefresh->setText("Auto-Refresh");
+    m_autoRefresh->setChecked(false);
+
+    m_refreshButton->setIconSize(QSize(16,16));
+    m_refreshButton->setIcon(QIcon::fromTheme("view-refresh"));
+    m_formatButton->setIconSize(QSize(16,16));
+    m_formatButton->setIcon(QIcon::fromTheme("format-text-direction-ltr"));
 
     QFont font;
     font.setFamily("Andale");
@@ -22,31 +52,49 @@ PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
     font.setWeight(1);
 
     m_editor->setFont(font);
-    new LilyHighlighter(m_editor);
-
     m_editor->setFixedWidth(200);
     m_editor->setPlainText(m_phrase->content());
+    new LilyHighlighter(m_editor);
     format();
 
     m_scrollArea->setWidget(m_pixmap);
     m_scrollArea->setWidgetResizable(true);
 
-    QHBoxLayout* layout = new QHBoxLayout(this);
-
-    layout->addWidget(m_editor);
-    layout->addWidget(m_scrollArea);
-
     this->setFixedWidth(800);
     this->setFixedHeight(400);
+}
 
-    connect(m_editor,SIGNAL(textChanged()),this,SLOT(onTextChanged()));
-    connect(m_phrase,SIGNAL(pixmapChanged()),this,SLOT(updatePixmap()));
+void PhraseEditor::layout() {
+    QHBoxLayout* layout = new QHBoxLayout(this);
+    QVBoxLayout* editor = new QVBoxLayout();
+    QVBoxLayout* viewer = new QVBoxLayout();
+
+    QHBoxLayout* toolbuttons = new QHBoxLayout();
+    QHBoxLayout* checkboxes  = new QHBoxLayout();
+
+    layout->addLayout(editor);
+    layout->addLayout(viewer);
+
+    editor->addLayout(toolbuttons);
+    editor->addWidget(m_editor);
+
+    viewer->addLayout(checkboxes);
+    viewer->addWidget(m_scrollArea);
+
+    //toolbuttons->setAlignment(Qt::AlignRight);
+    toolbuttons->addWidget(m_name);
+    toolbuttons->addWidget(m_formatButton);
+    toolbuttons->addWidget(m_refreshButton);
+
+    checkboxes->setAlignment(Qt::AlignLeft);
+    checkboxes->addWidget(m_autoRefresh);
+    checkboxes->addWidget(m_relative);
 }
 
 void PhraseEditor::onTextChanged() {
-    //format();
     m_phrase->setContent(m_editor->toPlainText());
-    m_phrase->refresh();
+    if(m_autoRefresh->checkState() == Qt::Checked)
+        m_refreshTimer.start(1000);
 }
 
 void PhraseEditor::updatePixmap() {

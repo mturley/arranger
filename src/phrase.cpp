@@ -33,6 +33,7 @@ Phrase::~Phrase() { }
  *
  */
 void Phrase::refresh() {
+    qDebug() << "REFRESH!";
     if(testFlag(PreviewFlags::Recent))
         return;
 
@@ -80,7 +81,7 @@ void Phrase::setStderr(QString stderr) {
 }
 
 void Phrase::setFlag(PreviewFlags::PreviewFlag flag) {
-    m_preview_flags |= (uint)flag;
+    m_preview_flags |= flag;
 }
 
 bool Phrase::testFlag(PreviewFlags::PreviewFlag flag) {
@@ -88,7 +89,7 @@ bool Phrase::testFlag(PreviewFlags::PreviewFlag flag) {
 }
 
 void Phrase::unsetFlag(PreviewFlags::PreviewFlag flag) {
-    m_preview_flags &= ~(uint)flag;
+    m_preview_flags &= ~flag;
 }
 
 void Phrase::clearFlags() {
