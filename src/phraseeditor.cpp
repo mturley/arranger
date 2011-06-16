@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QHBoxLayout>
 
+#include "lilyhighlighter.h"
+
 PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
     : QDialog(parent) {
 
@@ -18,7 +20,9 @@ PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
     font.setFixedPitch(true);
     font.setPixelSize(12);
     font.setWeight(1);
+
     m_editor->setFont(font);
+    new LilyHighlighter(m_editor);
 
     m_editor->setFixedWidth(200);
     m_editor->setPlainText(m_phrase->content());
@@ -34,6 +38,20 @@ PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
 
     this->setFixedWidth(800);
     this->setFixedHeight(400);
+
+    connect(m_editor,SIGNAL(textChanged()),this,SLOT(onTextChanged()));
+    connect(m_phrase,SIGNAL(pixmapChanged()),this,SLOT(updatePixmap()));
+}
+
+void PhraseEditor::onTextChanged() {
+    //format();
+    m_phrase->setContent(m_editor->toPlainText());
+    m_phrase->refresh();
+}
+
+void PhraseEditor::updatePixmap() {
+    m_pixmap->setPixmap(QPixmap::fromImage(*m_phrase->image()));
+    m_pixmap->setFixedSize(m_phrase->size());
 }
 
 void PhraseEditor::format() {

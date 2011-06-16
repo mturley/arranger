@@ -14,6 +14,8 @@ class PhraseEditor : public QDialog {
 public:
     PhraseEditor(Phrase*,QWidget* parent = 0);
 private slots:
+    void onTextChanged();
+    void updatePixmap();
     void format();
 private:
     Phrase*      m_phrase;
