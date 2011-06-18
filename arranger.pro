@@ -43,7 +43,6 @@ HEADERS += \
     src/lilyhighlighter.h \
     src/phraselistmodel.h \
     src/phraselistdelegate.h \
-    src/iscoretreeitem.h \
     src/projectmodel.h \
     src/iparentitem.h \
     src/ichilditem.h

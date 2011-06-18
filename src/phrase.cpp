@@ -43,6 +43,14 @@ void Phrase::refresh() {
     LilyGen::refreshPreview(this);
 }
 
+ChildType::Type Phrase::type() {
+    return ChildType::Phrase;
+}
+
+IParentItem* Phrase::parent() {
+    return m_parent;
+}
+
 const QString Phrase::name() const {
     return m_name;
 }

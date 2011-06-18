@@ -12,6 +12,10 @@ bool Staff::append(IChildItem* item) {
     return true;
 }
 
+IChildItem* Staff::child(int index) const {
+    return m_voices.at(index);
+}
+
 QString Staff::getDisplayLy() const {
     return QString();
 }

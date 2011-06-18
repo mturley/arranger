@@ -12,6 +12,9 @@ public:
     bool append(IChildItem*);
     IChildItem* child(int) const;
 
+    bool testFlag(PreviewFlags::PreviewFlag);
+    void setImage(QImage*);
+
     QString getDisplayLy() const;
     QString getWriteLy() const;
 private:

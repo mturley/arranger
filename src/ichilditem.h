@@ -5,9 +5,9 @@ class IParentItem;
 
 namespace ChildType {
     enum Type {
-        Score,
         Staff,
-        Voice
+        Voice,
+        Phrase
     };
 }
 

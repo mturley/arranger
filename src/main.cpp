@@ -4,6 +4,9 @@
 #include <QScrollBar>
 
 #include "mainwindow.h"
+#include "score.h"
+#include "staff.h"
+#include "voice.h"
 #include "phrase.h"
 #include "lilygen.h"
 #include "phrasewidget.h"
@@ -55,4 +58,17 @@ int main(int argc, char *argv[])
     //w.ui->listWidget->addItem(listItem);
 
     return a.exec();
+}
+
+void testTreeModel() {
+    Score* score  = new Score();
+
+    //Staff* staff1 = new Staff();
+    //Staff* staff2 = new Staff();
+
+    //score->append(staff1);
+    //score->append(staff2);
+
+    //staff1->append(new Voice("Voice 1"));
+    //staff2->append(new Voice("Voice 2"));
 }
