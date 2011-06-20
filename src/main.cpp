@@ -45,17 +45,16 @@ int main(int argc, char *argv[])
 
     view.show();
 
-    //PhraseWidget* someWidget = new PhraseWidget(phrase1);
-    //QListWidgetItem* first = new QListWidgetItem();
-    //first->setSizeHint(QSize(100,50));
-    //w.ui->listWidget->addItem(first);
-    //w.ui->listWidget->setItemWidget(first,someWidget);
+    PhraseWidget* someWidget = new PhraseWidget(phrase1);
+    QListWidgetItem* first = new QListWidgetItem();
+    first->setSizeHint(QSize(100,50));
+    w.ui->listWidget->addItem(first);
+    w.ui->listWidget->setItemWidget(first,someWidget);
 
-    //new PhraseWidgetListItem(phrase1,w.ui->listWidget);
-    //new PhraseWidgetListItem(phrase2,w.ui->listWidget);
-    //new PhraseWidgetListItem(phrase3,w.ui->listWidget);
-    //new PhraseWidgetListItem(phrase4,w.ui->listWidget);
-    //w.ui->listWidget->addItem(listItem);
+    new PhraseWidgetListItem(phrase1,w.ui->listWidget);
+    new PhraseWidgetListItem(phrase2,w.ui->listWidget);
+    new PhraseWidgetListItem(phrase3,w.ui->listWidget);
+    new PhraseWidgetListItem(phrase4,w.ui->listWidget);
 
     return a.exec();
 }
@@ -63,8 +62,8 @@ int main(int argc, char *argv[])
 void testTreeModel() {
     Score* score  = new Score();
 
-    //Staff* staff1 = new Staff();
-    //Staff* staff2 = new Staff();
+    Staff* staff1 = new Staff();
+    Staff* staff2 = new Staff();
 
     //score->append(staff1);
     //score->append(staff2);

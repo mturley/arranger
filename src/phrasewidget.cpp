@@ -30,7 +30,7 @@ PhraseWidget::PhraseWidget(Phrase* phrase,QWidget *parent)
     layout->addWidget(m_refreshButton);
     layout->addWidget(m_scrollArea);
 
-    connect(m_phrase,SIGNAL(pixmapChanged()),this,SLOT(updatePixmap()));
+    connect(m_phrase,SIGNAL(previewChanged()),this,SLOT(updatePixmap()));
     connect(m_refreshButton,SIGNAL(clicked()),this,SLOT(openEditor()));
 }
 

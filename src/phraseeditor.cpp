@@ -28,7 +28,7 @@ PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
     connect(m_formatButton,SIGNAL(clicked()),this,SLOT(format()));
 
     connect(m_editor,SIGNAL(textChanged()),this,SLOT(onTextChanged()));
-    connect(m_phrase,SIGNAL(pixmapChanged()),this,SLOT(updatePixmap()));
+    connect(m_phrase,SIGNAL(previewChanged()),this,SLOT(updatePixmap()));
     connect(&m_refreshTimer,SIGNAL(timeout()),m_phrase,SLOT(refresh()));
 }
 

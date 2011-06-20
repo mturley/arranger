@@ -1,20 +1,13 @@
 #ifndef SCORE_H
 #define SCORE_H
 
-#include "idisplayable.h"
-#include "iparentitem.h"
-#include "ichilditem.h"
+#include <QTreeWidgetItem>
+
+#include "displayable.h"
 #include "staff.h"
 
-class Score : public IDisplayable,
-              public IParentItem {
+class Score : public Displayable, public QTreeWidgetItem {
 public:
-    bool append(IChildItem*);
-    IChildItem* child(int) const;
-
-    bool testFlag(PreviewFlags::PreviewFlag);
-    void setImage(QImage*);
-
     QString getDisplayLy() const;
     QString getWriteLy() const;
 private:

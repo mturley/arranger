@@ -13,7 +13,6 @@ TEMPLATE = app
 SOURCES += \
     src/main.cpp\
     src/mainwindow.cpp \
-    src/content.cpp \
     src/phrase.cpp \
     src/voice.cpp \
     src/lilygen.cpp \
@@ -24,14 +23,13 @@ SOURCES += \
     src/phraselistmodel.cpp \
     src/phraselistdelegate.cpp \
     src/score.cpp \
-    src/staff.cpp
+    src/staff.cpp \
+    src/displayable.cpp
 
 
 HEADERS += \
     src/mainwindow.h \
     src/icontent.h \
-    src/idisplayable.h \
-    src/content.h \
     src/phrase.h \
     src/voice.h \
     src/staff.h \
@@ -44,8 +42,7 @@ HEADERS += \
     src/phraselistmodel.h \
     src/phraselistdelegate.h \
     src/projectmodel.h \
-    src/iparentitem.h \
-    src/ichilditem.h
+    src/displayable.h
 
 
 FORMS   += ui/mainwindow.ui

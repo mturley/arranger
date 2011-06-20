@@ -22,7 +22,7 @@ LilyGen::LilyGen() {
 
 // static refreshPreview
 // returns exit code, stores output in loutput, modifies flags, stores image in a_image
-void LilyGen::refreshPreview(IDisplayable* displayable) {
+void LilyGen::refreshPreview(Displayable* displayable) {
 
     Inst()->m_queue.enqueue(Job(displayable));
 

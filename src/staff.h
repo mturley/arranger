@@ -1,19 +1,13 @@
 #ifndef STAFF_H
 #define STAFF_H
 
-#include "idisplayable.h"
-#include "iparentitem.h"
-#include "ichilditem.h"
+#include <QTreeWidgetItem>
+
+#include "displayable.h"
 #include "voice.h"
 
-class Staff : public IDisplayable,
-              public IParentItem,
-              public IChildItem {
+class Staff : public Displayable, public QTreeWidgetItem {
 public:
-    ChildType::Type type();
-    bool append(IChildItem*);
-    IChildItem* child(int) const;
-
     QString getDisplayLy() const;
     QString getWriteLy() const;
 private:

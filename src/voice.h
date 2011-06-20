@@ -2,17 +2,14 @@
 #define VOICE_H
 
 #include <QObject>
-#include "idisplayable.h"
-#include "iparentitem.h"
-#include "ichilditem.h"
-#include "content.h"
+#include <QTreeWidgetItem>
+
+#include "displayable.h"
 
 class Phrase;
 
-class Voice : public QObject,
-              public IDisplayable,
-              public IParentItem,
-              public IChildItem {
+class Voice : public Displayable,
+              public QTreeWidgetItem {
     Q_OBJECT
 private:
     static const char* displayTemplate() {
@@ -28,18 +25,13 @@ private:
         return "%1 = \\new Voice %2 {\n%3\n}";
     }
 public:
-    Voice(QString name) : m_name(name), m_content("") {}
-
-    ChildType::Type type();
-    bool append(IChildItem*);
-    IChildItem* child(int) const;
+    Voice(QString name) : m_name(name) {}
 
     QString getDisplayLy() const;
     QString getWriteLy() const;
 
 private:
     QString        m_name;
-    Content        m_content;
     QList<Phrase*> m_phrases; // available phrases
 };
 

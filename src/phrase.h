@@ -5,17 +5,13 @@
 #include <QSize>
 #include <QString>
 
-#include "idisplayable.h"
-#include "ichilditem.h"
-#include "content.h"
+#include "displayable.h"
 
 class QImage;
 class QPixmap;
 class Voice;
 
-class Phrase : public QObject,
-               public IDisplayable,
-               public IChildItem {
+class Phrase : public Displayable {
     Q_OBJECT
 private:
     static const char* displayTemplate() {
@@ -37,44 +33,25 @@ public:
     ~Phrase();
 
 public slots:
-    void refresh();
-
     void setName   (const QString);
-    void setContent(const QString);
     void setStderr (const QString);
-    void setFlag   (const PreviewFlags::PreviewFlag);
-    void setImage  (QImage*);
 
 public:
-    ChildType::Type type();
-    IParentItem* parent();
-
     const QString name() const;
-    const QString content() const;
     const QString stderr() const;
-    const QImage* image();
-          QSize   size();
-
-    bool testFlag(PreviewFlags::PreviewFlag);
-    void unsetFlag(PreviewFlags::PreviewFlag);
-    void clearFlags();
 
     QString getDisplayLy() const;
     QString getWriteLy() const;
 
 signals:
     void stderrChanged();
-    void pixmapChanged();
 
 private:
     Voice*       m_parent;
     QString      m_name;          // the name of this phrase
-    Content      m_content;       // the musical content
     QString      m_stderr;        // lilypond output
     bool         m_relative_flag; // notes are relative or absolute
     QString      m_relative_note; // relative note [a-g](is|es)('*|,*)
-    uint         m_preview_flags; // state of the preview
-    QImage*      m_image;         // preview image of the phrase
 };
 
 #endif // PHRASE_H

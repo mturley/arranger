@@ -9,7 +9,7 @@
 #include <QString>
 #include <QThread>
 
-#include "idisplayable.h"
+#include "displayable.h"
 
 class QProcess;
 class Phrase;
@@ -28,16 +28,16 @@ class LilyGen : public QThread {
     Q_OBJECT
 private:
     struct Job {
-        Job(IDisplayable* displayable)
+        Job(Displayable* displayable)
             : m_id(rand()),
             m_displayable(displayable) { }
 
         int m_id;
-        IDisplayable* m_displayable;
+        Displayable* m_displayable;
     };
 
 public:
-    static void refreshPreview(IDisplayable*);
+    static void refreshPreview(Displayable*);
 
 private:
     static LilyGen* Inst();
