@@ -25,7 +25,7 @@ private:
         return "%1 = \\new Voice %2 {\n%3\n}";
     }
 public:
-    Voice(QString name) : m_name(name) {}
+    Voice(QString);
 
     QString getDisplayLy() const;
     QString getWriteLy() const;

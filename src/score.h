@@ -8,10 +8,15 @@
 
 class Score : public Displayable, public QTreeWidgetItem {
 public:
+    Score(QString);
+
+    void addStaff(Staff*);
+
     QString getDisplayLy() const;
     QString getWriteLy() const;
 private:
     QList<Staff*> m_staves;
+    QString       m_name;
 };
 
 #endif // SCORE_H
