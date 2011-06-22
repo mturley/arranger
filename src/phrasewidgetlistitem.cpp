@@ -5,7 +5,7 @@
 
 PhraseWidgetListItem::PhraseWidgetListItem(Phrase* phrase, QListWidget* parent)
     : QListWidgetItem(parent){
-    m_phraseWidget = new PhraseWidget(phrase);
+    m_phraseWidget = new PhraseWidget(phrase);;
 
     this->setSizeHint(m_phraseWidget->sizeHint());
     this->listWidget()->setItemWidget(this,m_phraseWidget);

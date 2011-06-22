@@ -24,6 +24,9 @@ PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
     init();
     layout();
 
+    //m_pixmap->setPixmap(QPixmap::fromImage(*phrase->image()));
+    //m_pixmap->setFixedSize(phrase->size());
+
     connect(m_refreshButton,SIGNAL(clicked()),m_phrase,SLOT(refresh()));
     connect(m_formatButton,SIGNAL(clicked()),this,SLOT(format()));
 
@@ -59,6 +62,7 @@ void PhraseEditor::init() {
 
     m_scrollArea->setWidget(m_pixmap);
     m_scrollArea->setWidgetResizable(true);
+    m_scrollArea->setPalette(QPalette(Qt::white));
 
     this->setFixedWidth(800);
     this->setFixedHeight(400);

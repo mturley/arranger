@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QScrollBar>
+
 #include "phraselistdelegate.h"
 #include "phraselistmodel.h"
 #include "phrasewidgetlistitem.h"
@@ -25,31 +27,49 @@ MainWindow::~MainWindow()
 
 void MainWindow::init() {
     ui->listView->setResizeMode(QListView::Adjust);
+    ui->listView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     PhraseListDelegate* delegate = new PhraseListDelegate();
     PhraseListModel* model       = new PhraseListModel();
 
     ui->listView->setModel(model);
     ui->listView->setItemDelegate(delegate);
 
-    Phrase* phrase1 = new Phrase("PhraseI","<c' e g>1 b8 a g f e d c4 d'2 e2( f4 c4 g8 -> ( a8 g4)");
-    Phrase* phrase2 = new Phrase("PhraseII","d2 e2( f4 c4 g8 a8 g4) c'1 b8 a g f e d c4 c'1 b8 a g f e d c4");
-    Phrase* phrase3 = new Phrase("PhraseIII","e8 e e e f g f e c' c c d c b a g");
-    Phrase* phrase4 = new Phrase("PhraseIV","f1~ f");
+    Phrase* phraseA = new Phrase("PhraseA","<c' e g>1 b8 a g f e d c4 d'2 e2( f4 c4 g8 -> ( a8 g4)");
+    Phrase* phraseB = new Phrase("PhraseB","d2 e2( f4 c4 g8 a8 g4) c'1 b8 a g f e d c4 c'1 b8 a g f e d c4");
+    Phrase* phraseC = new Phrase("PhraseC","e8 e e e f g f e c' c c d c b a g");
+    Phrase* phraseD = new Phrase("PhraseD","f1~ f");
+    Phrase* phraseE = new Phrase("PhraseE","<c' e g>1 b8 a g f e d c4 d'2 e2( f4 c4 g8 -> ( a8 g4)");
+    Phrase* phraseF = new Phrase("PhraseF","d2 e2( f4 c4 g8 a8 g4) c'1 b8 a g f e d c4 c'1 b8 a g f e d c4");
+    Phrase* phraseG = new Phrase("PhraseG","e8 e e e f g f e c' c c d c b a g");
+    Phrase* phraseH = new Phrase("PhraseH","f1~ f");
 
-    phrase1->refresh();
-    phrase2->refresh();
-    phrase3->refresh();
-    phrase4->refresh();
+    phraseA->refresh();
+    phraseB->refresh();
+    phraseC->refresh();
+    phraseD->refresh();
+    phraseE->refresh();
+    phraseF->refresh();
+    phraseG->refresh();
+    phraseH->refresh();
 
-    model->append(phrase1);
-    model->append(phrase2);
-    model->append(phrase3);
-    model->append(phrase4);
+    model->append(phraseA);
+    model->append(phraseB);
+    model->append(phraseC);
+    model->append(phraseD);
+    model->append(phraseE);
+    model->append(phraseF);
+    model->append(phraseG);
+    model->append(phraseH);
 
-    new PhraseWidgetListItem(phrase1,ui->listWidget);
-    new PhraseWidgetListItem(phrase2,ui->listWidget);
-    new PhraseWidgetListItem(phrase3,ui->listWidget);
-    new PhraseWidgetListItem(phrase4,ui->listWidget);
+    new PhraseWidgetListItem(phraseA,ui->listWidget);
+    new PhraseWidgetListItem(phraseB,ui->listWidget);
+    new PhraseWidgetListItem(phraseC,ui->listWidget);
+    new PhraseWidgetListItem(phraseD,ui->listWidget);
+    new PhraseWidgetListItem(phraseE,ui->listWidget);
+    new PhraseWidgetListItem(phraseF,ui->listWidget);
+    new PhraseWidgetListItem(phraseG,ui->listWidget);
+    new PhraseWidgetListItem(phraseH,ui->listWidget);
 
     // test tree models
 
