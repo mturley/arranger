@@ -15,9 +15,13 @@ class PhraseEditor : public QDialog {
     Q_OBJECT
 public:
     PhraseEditor(Phrase*,QWidget* parent = 0);
+
+public slots:
+    void show();
 private:
     void init();
     void layout();
+    void reset();
 private slots:
     void onTextChanged();
     void updatePixmap();

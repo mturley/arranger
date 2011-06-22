@@ -8,7 +8,7 @@
 PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
     : QDialog(parent) {
 
-    m_phrase = new Phrase(*phrase);
+    m_phrase = phrase;
 
     m_relative      = new QCheckBox();
     m_autoRefresh   = new QCheckBox();
@@ -24,15 +24,19 @@ PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
     init();
     layout();
 
-    //m_pixmap->setPixmap(QPixmap::fromImage(*phrase->image()));
-    //m_pixmap->setFixedSize(phrase->size());
-
     connect(m_refreshButton,SIGNAL(clicked()),m_phrase,SLOT(refresh()));
     connect(m_formatButton,SIGNAL(clicked()),this,SLOT(format()));
 
     connect(m_editor,SIGNAL(textChanged()),this,SLOT(onTextChanged()));
     connect(m_phrase,SIGNAL(previewChanged()),this,SLOT(updatePixmap()));
     connect(&m_refreshTimer,SIGNAL(timeout()),m_phrase,SLOT(refresh()));
+}
+
+void PhraseEditor::show() {
+    m_pixmap->setPixmap(QPixmap::fromImage(*m_phrase->image()));
+    m_pixmap->setFixedSize(m_phrase->size());
+    m_phrase = new Phrase(*m_phrase);
+    QDialog::show();
 }
 
 void PhraseEditor::init() {
