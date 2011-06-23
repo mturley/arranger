@@ -1,5 +1,6 @@
 #include "displayable.h"
 
+#include <QDebug>
 #include <QImage>
 
 #include "lilygen.h"

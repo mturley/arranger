@@ -7,35 +7,37 @@
 
 PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
     : QDialog(parent) {
+    m_phrase_original = phrase;
+    m_phrase_copy     = new Phrase(*m_phrase_original);
 
-    m_phrase = phrase;
+    m_relative        = new QCheckBox();
+    m_autoRefresh     = new QCheckBox();
 
-    m_relative      = new QCheckBox();
-    m_autoRefresh   = new QCheckBox();
+    m_name            = new QLabel();
+    m_refreshButton   = new QToolButton();
+    m_formatButton    = new QToolButton();
 
-    m_name          = new QLabel("- " + m_phrase->name() + " -");
-    m_refreshButton = new QToolButton();
-    m_formatButton  = new QToolButton();
-
-    m_editor        = new QTextEdit();
-    m_scrollArea    = new QScrollArea();
-    m_pixmap        = new QLabel();
+    m_editor          = new QTextEdit();
+    m_scrollArea      = new QScrollArea();
+    m_pixmap          = new QLabel();
 
     init();
     layout();
 
-    connect(m_refreshButton,SIGNAL(clicked()),m_phrase,SLOT(refresh()));
+    connect(m_refreshButton,SIGNAL(clicked()),m_phrase_copy,SLOT(refresh()));
     connect(m_formatButton,SIGNAL(clicked()),this,SLOT(format()));
 
     connect(m_editor,SIGNAL(textChanged()),this,SLOT(onTextChanged()));
-    connect(m_phrase,SIGNAL(previewChanged()),this,SLOT(updatePixmap()));
-    connect(&m_refreshTimer,SIGNAL(timeout()),m_phrase,SLOT(refresh()));
+    connect(m_phrase_copy,SIGNAL(previewChanged()),this,SLOT(updatePixmap()));
+    connect(&m_refreshTimer,SIGNAL(timeout()),m_phrase_copy,SLOT(refresh()));
 }
 
 void PhraseEditor::show() {
-    m_pixmap->setPixmap(QPixmap::fromImage(*m_phrase->image()));
-    m_pixmap->setFixedSize(m_phrase->size());
-    m_phrase = new Phrase(*m_phrase);
+    m_name->setText("- " + m_phrase_copy->name() + " -");
+    m_phrase_copy->refresh();
+
+    format();
+
     QDialog::show();
 }
 
@@ -60,9 +62,8 @@ void PhraseEditor::init() {
 
     m_editor->setFont(font);
     m_editor->setFixedWidth(200);
-    m_editor->setPlainText(m_phrase->content());
+    m_editor->setPlainText(m_phrase_copy->content());
     new LilyHighlighter(m_editor);
-    format();
 
     m_scrollArea->setWidget(m_pixmap);
     m_scrollArea->setWidgetResizable(true);
@@ -89,7 +90,6 @@ void PhraseEditor::layout() {
     viewer->addLayout(checkboxes);
     viewer->addWidget(m_scrollArea);
 
-    //toolbuttons->setAlignment(Qt::AlignRight);
     toolbuttons->addWidget(m_name);
     toolbuttons->addWidget(m_formatButton);
     toolbuttons->addWidget(m_refreshButton);
@@ -100,18 +100,22 @@ void PhraseEditor::layout() {
 }
 
 void PhraseEditor::onTextChanged() {
-    m_phrase->setContent(m_editor->toPlainText());
+    //m_phrase_copy->setContent(m_editor->toPlainText());
     if(m_autoRefresh->checkState() == Qt::Checked)
         m_refreshTimer.start(1000);
 }
 
 void PhraseEditor::updatePixmap() {
-    m_pixmap->setPixmap(QPixmap::fromImage(*m_phrase->image()));
-    m_pixmap->setFixedSize(m_phrase->size());
+    m_pixmap->setPixmap(QPixmap::fromImage(*m_phrase_copy->image()));
+    m_pixmap->setFixedSize(m_phrase_copy->size());
 }
 
 void PhraseEditor::format() {
-    QString text = m_phrase->content();
+    QString text = m_phrase_copy->content();
+    qDebug() << text;
+
+    // first, tokenize
+    // this should be separated into a function
 
     QStringList tokens;
 
@@ -121,22 +125,41 @@ void PhraseEditor::format() {
 
     QString temp = "";
     for(int i = 0; i < text.size(); i++) {
-        int startIndex = i;
-
+        // add token if we hit a delimiter
         int delimiterType = delimiters.indexOf(text[i]);
         if(delimiterType >= 0) {
-            if(temp.size() > 0)
+            if(temp.size() >= 0) {
                 tokens.append(temp);
-            temp.clear();
+                temp.clear();
+            }
             continue;
         }
 
+        // first, separate out blocks
         int blockType = blockStart.indexOf(text[i]);
-        if(blockType >= 0)
-            while(i < text.size() && text[i] != blockEnd[blockType]) i++;
+        if(blockType >= 0) {
+            if(blockType == 0) {
+                // unhandled
+            }
+            if(blockType == 1) {
+                // unhandled
+            }
+            if(blockType == 2) {
+                while(i < text.size() && text[i] != blockEnd[blockType])
+                    temp += text[i++];
+                temp += text[i];
+                continue;
+            }
+        }
 
-        temp += text.mid(startIndex,(i - startIndex) + 1);
+        temp += text[i];
     }
+    if(temp.size() >= 0) {
+        tokens.append(temp);
+        temp.clear();
+    }
+
+    // now re-create
 
     QRegExp note("([a-g](?:(?:(?:sharp|is|s)){0,2}|(?:(?:flat|es|f)){0,2})[,']{0,4})(128|64|32|16|8|4|2|1)?");
     QRegExp chord("<(.*)>(128|64|32|16|8|4|2|1)?");
@@ -146,12 +169,12 @@ void PhraseEditor::format() {
     QString result    = "  ";
 
     for(int i = 0; i < tokens.size(); i++) {
-        qDebug() << tokens[i];
-
+        //qDebug() << tokens[i];
         int noteValue = -1;
 
         note.indexIn(tokens[i]);
 
+        // determine the note value of a token
         if(chord.exactMatch(tokens[i])) {
             noteValue = chord.cap(2).toInt();
             noteValue = (noteValue > 0 ? noteValue : prevValue);
@@ -167,14 +190,17 @@ void PhraseEditor::format() {
             prevValue = noteValue;
         }
 
+        // add the token to the string
         result += tokens[i];
         result += " ";
 
+        // break the line if value exceeds 1
         if(lineValue >= 1) {
             lineValue = 0;
             result += "\n  ";
         }
     }
 
+    qDebug() << result;
     m_editor->setText(result);
 }

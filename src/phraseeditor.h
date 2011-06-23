@@ -27,7 +27,8 @@ private slots:
     void updatePixmap();
     void format();
 private:
-    Phrase*      m_phrase;
+    Phrase*      m_phrase_original;
+    Phrase*      m_phrase_copy;
     QCheckBox*   m_relative;
     QCheckBox*   m_autoRefresh;
 
