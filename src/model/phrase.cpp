@@ -4,7 +4,7 @@
 #include <QPixmap>
 
 #include "voice.h"
-#include "lilygen.h"
+#include "../lilygen.h"
 
 Phrase::Phrase(QString name, QString content, Voice* parent)
     : m_name(name) {

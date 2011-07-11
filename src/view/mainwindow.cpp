@@ -8,10 +8,10 @@
 #include "phraselistmodel.h"
 #include "phrasewidgetlistitem.h"
 #include "phrasewidget.h"
-#include "score.h"
-#include "staff.h"
-#include "voice.h"
-#include "phrase.h"
+#include "../model/score.h"
+#include "../model/staff.h"
+#include "../model/voice.h"
+#include "../model/phrase.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),

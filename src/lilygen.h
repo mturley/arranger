@@ -9,7 +9,7 @@
 #include <QString>
 #include <QThread>
 
-#include "displayable.h"
+#include "model/displayable.h"
 
 class QProcess;
 class Phrase;

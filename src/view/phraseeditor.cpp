@@ -3,8 +3,8 @@
 #include <QDebug>
 #include <QHBoxLayout>
 
-#include "lilyhighlighter.h"
-#include "lilytools.h"
+#include "../lilyhighlighter.h"
+#include "../lilytools.h"
 
 PhraseEditor::PhraseEditor(Phrase* phrase,QWidget *parent)
     : QDialog(parent) {

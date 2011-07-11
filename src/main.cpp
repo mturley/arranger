@@ -3,16 +3,16 @@
 #include <QListView>
 #include <QScrollBar>
 
-#include "mainwindow.h"
-#include "score.h"
-#include "staff.h"
-#include "voice.h"
-#include "phrase.h"
+#include "view/mainwindow.h"
+#include "model/score.h"
+#include "model/staff.h"
+#include "model/voice.h"
+#include "model/phrase.h"
 #include "lilygen.h"
-#include "phrasewidget.h"
-#include "phrasewidgetlistitem.h"
-#include "phraselistmodel.h"
-#include "phraselistdelegate.h"
+#include "view/phrasewidget.h"
+#include "view/phrasewidgetlistitem.h"
+#include "view/phraselistmodel.h"
+#include "view/phraselistdelegate.h"
 
 int main(int argc, char *argv[])
 {

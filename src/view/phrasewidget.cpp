@@ -4,7 +4,7 @@
 #include <QHBoxLayout>
 #include <QScrollBar>
 
-#include "lilytools.h"
+#include "../lilytools.h"
 
 PhraseWidget::PhraseWidget(Phrase* phrase,QWidget *parent)
     : QWidget(parent) {

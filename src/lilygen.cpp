@@ -6,7 +6,7 @@
 #include <QImage>
 #include <QProcess>
 
-#include "phrase.h"
+#include "model/phrase.h"
 
 LilyGen* LilyGen::m_instance = NULL;
 

@@ -11,38 +11,40 @@ TEMPLATE = app
 
 
 SOURCES += \
-    src/main.cpp\
-    src/mainwindow.cpp \
-    src/phrase.cpp \
-    src/voice.cpp \
-    src/lilygen.cpp \
-    src/phrasewidget.cpp \
-    src/phrasewidgetlistitem.cpp \
-    src/phraseeditor.cpp \
+    src/main.cpp \
+    src/lilytools.cpp \
     src/lilyhighlighter.cpp \
-    src/phraselistmodel.cpp \
-    src/phraselistdelegate.cpp \
-    src/score.cpp \
-    src/staff.cpp \
-    src/displayable.cpp
+    src/lilygen.cpp \
+    src/model/voice.cpp \
+    src/model/staff.cpp \
+    src/model/score.cpp \
+    src/model/phrase.cpp \
+    src/model/displayable.cpp \
+    src/view/phrasewidgetlistitem.cpp \
+    src/view/phrasewidget.cpp \
+    src/view/phraselistmodel.cpp \
+    src/view/phraselistdelegate.cpp \
+    src/view/phraseeditor.cpp \
+    src/view/mainwindow.cpp
+
 
 
 HEADERS += \
-    src/mainwindow.h \
-    src/icontent.h \
-    src/phrase.h \
-    src/voice.h \
-    src/staff.h \
-    src/score.h \
-    src/lilygen.h \
-    src/phrasewidget.h \
-    src/phrasewidgetlistitem.h \
-    src/phraseeditor.h \
+    src/lilytools.h \
     src/lilyhighlighter.h \
-    src/phraselistmodel.h \
-    src/phraselistdelegate.h \
-    src/projectmodel.h \
-    src/displayable.h
+    src/lilygen.h \
+    src/model/voice.h \
+    src/model/staff.h \
+    src/model/score.h \
+    src/model/phrase.h \
+    src/model/displayable.h \
+    src/view/phrasewidgetlistitem.h \
+    src/view/phrasewidget.h \
+    src/view/phraselistmodel.h \
+    src/view/phraselistdelegate.h \
+    src/view/phraseeditor.h \
+    src/view/mainwindow.h
+
 
 
 FORMS   += ui/mainwindow.ui

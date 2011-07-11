@@ -9,7 +9,7 @@
 #include <QTimer>
 #include <QToolButton>
 
-#include "phrase.h"
+#include "../model/phrase.h"
 
 class PhraseEditor : public QDialog {
     Q_OBJECT
