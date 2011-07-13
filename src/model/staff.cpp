@@ -1,9 +1,9 @@
 #include "staff.h"
 
 Staff::Staff(QString name)
-    : QTreeWidgetItem(1001) {
-    m_name = name;
-    this->setText(0,m_name);
+    : Displayable(name),
+      QTreeWidgetItem(1001) {
+    this->setText(0,name);
 }
 
 void Staff::addVoice(Voice* voice) {

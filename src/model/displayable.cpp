@@ -8,12 +8,20 @@
 Displayable::Displayable()
     : m_preview_flags(0),
       m_image(0),
-      m_content() { }
+      m_content(),
+      m_name() { }
+
+Displayable::Displayable(QString name)
+    : m_preview_flags(0),
+      m_image(0),
+      m_content(),
+      m_name(name) { }
 
 Displayable::Displayable(const Displayable& displayable)
     : m_preview_flags(0),
       m_image(0),
-      m_content(displayable.content()) { }
+      m_content(displayable.content()),
+      m_name(displayable.name()) { }
 
 Displayable::~Displayable() {
     if(m_image)
@@ -36,6 +44,9 @@ void Displayable::clearFlags() {
 const QString Displayable::content() const {
     return m_content;
 }
+const QString Displayable::name() const {
+    return m_name;
+}
 const QImage* Displayable::image() const {
     return m_image;
 }
@@ -46,6 +57,9 @@ QSize Displayable::size() const {
 void Displayable::setContent(QString content) {
     m_content = content;
     clearFlag(PreviewFlags::Recent);
+}
+void Displayable::setName(QString name) {
+    m_name = name;
 }
 
 void Displayable::setImage(QImage* image) {

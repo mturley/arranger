@@ -28,9 +28,8 @@ private:
     }
     static const char* writeTemplate() {
         // %1 : name
-        // %2 : relative pitch
-        // %3 : content
-        return "%1 = \\relative %2 {\n%3\n}\n";
+        // %2 : content
+        return "%1 = {\n%2\n}\n";
     }
 public:
     Phrase(QString,QString = "",Voice* = 0);
@@ -38,11 +37,9 @@ public:
     ~Phrase();
 
 public slots:
-    void setName   (const QString);
     void setStderr (const QString);
 
 public:
-    const QString name() const;
     const QString stderr() const;
 
     QString getDisplayLy() const;
@@ -55,7 +52,6 @@ signals:
 
 private:
     Voice*       m_parent;
-    QString      m_name;          // the name of this phrase
     QString      m_stderr;        // lilypond output
     bool         m_relative_flag; // notes are relative or absolute
     QString      m_relative_note; // relative note [a-g](is|es)('*|,*)

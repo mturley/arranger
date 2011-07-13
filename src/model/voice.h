@@ -40,7 +40,6 @@ public:
 
     QList<Phrase*>& getPhraseList();
 private:
-    QString        m_name;
     QList<Phrase*> m_phrases; // available phrases
 };
 

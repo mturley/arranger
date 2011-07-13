@@ -1,9 +1,9 @@
 #include "score.h"
 
 Score::Score(QString name)
-    : QTreeWidgetItem(1000) {
-    m_name = name;
-    this->setText(0,m_name);
+    : Displayable(name),
+      QTreeWidgetItem(1000) {
+    this->setText(0,name);
 }
 
 void Score::addStaff(Staff* staff) {

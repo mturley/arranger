@@ -18,7 +18,6 @@ public:
     QList<Phrase*>& getPhraseList();
 private:
     QList<Staff*> m_staves;
-    QString       m_name;
 };
 
 #endif // SCORE_H

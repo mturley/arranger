@@ -3,9 +3,9 @@
 #include "phrase.h"
 
 Voice::Voice(QString name)
-    : QTreeWidgetItem(1002) {
-    m_name = name;
-    this->setText(0,m_name);
+    : Displayable(name),
+      QTreeWidgetItem(1002) {
+    this->setText(0,name);
 }
 
 void Voice::addPhrase(Phrase* phrase) {
@@ -23,7 +23,7 @@ QString Voice::getWriteLy() const {
     QString phrase_ly;
     for(int i = 0; i < m_phrases.size(); i++)
         phrase_ly.append(m_phrases.at(i)->getWriteLy());
-    return QString(writeTemplate()).arg(phrase_ly,m_name,content());
+    return QString(writeTemplate()).arg(phrase_ly,name(),content());
 }
 
 QList<Phrase*>& Voice::getPhraseList() {

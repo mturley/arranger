@@ -19,15 +19,19 @@ class Displayable : public QObject {
     Q_OBJECT
 public:
     Displayable();
+    Displayable(QString);
     Displayable(const Displayable&);
     ~Displayable();
 
 public:
     bool testFlag(PreviewFlags::PreviewFlag) const;
     const QString content() const;
+    const QString name() const;
     const QImage* image() const;
           QSize size() const;
+
     void setContent(QString);
+    void setName(QString);
     void setImage(QImage*);
 
     virtual QString getDisplayLy() const = 0;
@@ -50,6 +54,7 @@ private:
     uint    m_preview_flags;
     QImage* m_image;
     QString m_content;
+    QString m_name;
 };
 
 #endif // IDISPLAYABLE_H

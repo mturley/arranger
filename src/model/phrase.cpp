@@ -7,26 +7,17 @@
 #include "../lilygen.h"
 
 Phrase::Phrase(QString name, QString content, Voice* parent)
-    : m_name(name) {
+    : Displayable(name) {
     setContent(content);
 }
 
 Phrase::Phrase(const Phrase& phrase)
-    : Displayable(phrase),
-      m_name(phrase.name()) { }
+    : Displayable(phrase) { }
 
 Phrase::~Phrase() { }
 
-const QString Phrase::name() const {
-    return m_name;
-}
-
 const QString Phrase::stderr() const {
     return m_stderr;
-}
-
-void Phrase::setName(const QString name) {
-    m_name = name;
 }
 
 void Phrase::setStderr(QString stderr) {
@@ -38,7 +29,7 @@ QString Phrase::getDisplayLy() const {
 }
 
 QString Phrase::getWriteLy() const {
-    return QString(writeTemplate()).arg(m_name,m_relative_note,content());
+    return QString(writeTemplate()).arg(name(),content());
 }
 
 QList<Phrase*>& Phrase::getPhraseList() {

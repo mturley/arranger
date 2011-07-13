@@ -15,10 +15,12 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    m_selection(0)
 {
     ui->setupUi(this);
     init();
+    testModel();
 }
 
 MainWindow::~MainWindow()
@@ -27,16 +29,38 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::init() {
-    //ui->listView->setResizeMode(QListView::Adjust);
-    //ui->listView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     ui->listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     ui->listWidget->setResizeMode(QListWidget::Adjust);
-    //PhraseListDelegate* delegate = new PhraseListDelegate();
-    //PhraseListModel* model       = new PhraseListModel();
 
-    //ui->listView->setModel(model);
-    //ui->listView->setItemDelegate(delegate);
+    ui->refreshButton->setIconSize(QSize(16,16));
+    ui->refreshButton->setIcon(QIcon::fromTheme("view-refresh"));
+    ui->formatButton->setIconSize(QSize(16,16));
+    ui->formatButton->setIcon(QIcon::fromTheme("format-text-direction-ltr"));
 
+    QFont font;
+    font.setFamily("Andale");
+    font.setFixedPitch(true);
+    font.setPixelSize(12);
+    font.setWeight(1);
+
+    ui->contentEdit->setFont(font);
+
+    ui->scrollArea->setWidgetResizable(true);
+    ui->scrollArea->setPalette(QPalette(Qt::white));
+
+
+    // connect onTreeItemClicked
+    connect(ui->treeWidget,SIGNAL(itemClicked(QTreeWidgetItem*,int)),
+            this,SLOT(onTreeItemClicked(QTreeWidgetItem*,int)));
+
+    // connect onContentEditChanged
+    connect(ui->contentEdit,SIGNAL(textChanged()),this,SLOT(onContentEditChanged()));
+
+    // connect onNameEditChanged
+    connect(ui->nameEdit,SIGNAL(textChanged(QString)),this,SLOT(onNameEditChanged(QString)));
+}
+
+void MainWindow::testModel() {
     Phrase* phraseA = new Phrase("PhraseAAALongNameTotally","<c' e g>1 b8 a g f e d c4 d'2 e2( f4 c4 g8 -> ( a8 g4)");
     Phrase* phraseB = new Phrase("PhraseB","d2 e2( f4 c4 g8 a8 g4) c'1 b8 a g f e d c4 c'1 b8 a g f e d c4");
     Phrase* phraseC = new Phrase("PhraseC","e8 e e e f g f e c' c c d c b a g");
@@ -54,17 +78,6 @@ void MainWindow::init() {
     phraseF->refresh();
     phraseG->refresh();
     phraseH->refresh();
-
-    //model->append(phraseA);
-    //model->append(phraseB);
-    //model->append(phraseC);
-    //model->append(phraseD);
-    //model->append(phraseE);
-    //model->append(phraseF);
-    //model->append(phraseG);
-    //model->append(phraseH);
-
-    // test tree models
 
     Score* scoreA = new Score("ScoreA");
     Score* scoreB = new Score("ScoreB");
@@ -120,24 +133,28 @@ void MainWindow::init() {
     ui->treeWidget->insertTopLevelItem(0,scoreA);
     ui->treeWidget->insertTopLevelItem(1,scoreB);
     ui->treeWidget->insertTopLevelItem(2,scoreC);
-
-    connect(ui->treeWidget,SIGNAL(itemClicked(QTreeWidgetItem*,int)),
-            this,SLOT(onTreeItemClicked(QTreeWidgetItem*,int)));
 }
 
 void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int col) {
 
-    Displayable* d;
+    Displayable* d = 0;
 
     // magic numbers need to turn into constants...
     // don't know where to put them right now...
     switch(item->type()) {
         case 1000: d = (Score*)item; break;
-        case 1001: d = (Staff*)item; qDebug() << d->getDisplayLy(); break;
-        case 1002: d = (Voice*)item; qDebug() << d->getDisplayLy(); break;
+        case 1001: d = (Staff*)item; break;
+        case 1002: d = (Voice*)item; break;
     }
 
     if(d) {
+        disconnect(m_selection);
+
+        // set m_selection
+        m_selection = d;
+
+        connect(ui->refreshButton,SIGNAL(clicked()),m_selection,SLOT(refresh()));
+        connect(m_selection,SIGNAL(previewChanged()),this,SLOT(onRefreshButtonClicked()));
 
         // set pixmap label
         if(d->image())
@@ -151,5 +168,34 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int col) {
             new PhraseWidgetListItem(list.at(i),ui->listWidget);
         delete &list;
 
+        // set contentEdit
+        ui->contentEdit->setPlainText(d->content());
+
+        // set nameEdit
+        ui->nameEdit->setText(d->name());
+    }
+}
+
+void MainWindow::onContentEditChanged() {
+    qDebug() << "onContentEditChanged";
+    if(m_selection) {
+        m_selection->setContent(ui->contentEdit->toPlainText());
+    }
+}
+
+void MainWindow::onNameEditChanged(QString s) {
+    qDebug() << "onNameEditChanged :" << s;
+    if(m_selection) {
+        ui->treeWidget->currentItem()->setText(0,s);
+        m_selection->setName(s);
+    }
+}
+
+void MainWindow::onRefreshButtonClicked() {
+    if(m_selection) {
+        if(m_selection->image())
+            ui->pixmap->setPixmap(QPixmap::fromImage(*m_selection->image()));
+        else
+            m_selection->refresh();
     }
 }

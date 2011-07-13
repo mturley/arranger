@@ -36,7 +36,6 @@ public:
     QList<Phrase*>& getPhraseList();
 private:
     QList<Voice*> m_voices;
-    QString       m_name;
 };
 
 #endif // STAFF_H
