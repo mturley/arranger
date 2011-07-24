@@ -32,7 +32,8 @@ private:
         return "%1 = {\n%2\n}\n";
     }
 public:
-    Phrase(QString,QString = "",Voice* = 0);
+    Phrase();
+    Phrase(QString,QString = "");
     Phrase(const Phrase&);
     ~Phrase();
 
@@ -47,11 +48,13 @@ public:
 
     QList<Phrase*>& getPhraseList();
 
+    //QDataStream& operator<<(QDataStream& s) const;
+    //QDataStream& operator>>(QDataStream& s);
+
 signals:
     void stderrChanged();
 
 private:
-    Voice*       m_parent;
     QString      m_stderr;        // lilypond output
     bool         m_relative_flag; // notes are relative or absolute
     QString      m_relative_note; // relative note [a-g](is|es)('*|,*)

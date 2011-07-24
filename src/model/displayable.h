@@ -2,6 +2,7 @@
 #define DISPLAYABLE_H
 
 #include <QObject>
+#include <QTreeWidgetItem>
 
 class QImage;
 class QSize;
@@ -39,6 +40,9 @@ public:
 
     virtual QList<Phrase*>& getPhraseList() = 0;
 
+    virtual QDataStream& operator<<(QDataStream& s) const;
+    virtual QDataStream& operator>>(QDataStream& s);
+
 private:
     void setFlag(PreviewFlags::PreviewFlag);
     void clearFlag(PreviewFlags::PreviewFlag);
@@ -56,5 +60,8 @@ private:
     QString m_content;
     QString m_name;
 };
+
+QDataStream &operator<<(QDataStream &out, const Displayable &d);
+QDataStream &operator>>(QDataStream &in, Displayable &d);
 
 #endif // IDISPLAYABLE_H

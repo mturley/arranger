@@ -31,7 +31,10 @@ private:
                "%2 = \\new Voice {\n%3\n}\n";
     }
 public:
+    Voice();
     Voice(QString);
+    Voice(const Voice&);
+    ~Voice();
 
     void addPhrase(Phrase*);
 
@@ -39,6 +42,10 @@ public:
     QString getWriteLy() const;
 
     QList<Phrase*>& getPhraseList();
+
+    friend QDataStream& operator<<(QDataStream& out, const Voice& voice);
+    friend QDataStream& operator>>(QDataStream& in, Voice& voice);
+
 private:
     QList<Phrase*> m_phrases; // available phrases
 };

@@ -10,7 +10,7 @@
  * Determines if the input is a block...
  */
 bool LilyTools::isBlock(const QString& input) {
-
+    return false;
 }
 
 bool LilyTools::isNote(const QString&);
@@ -62,4 +62,5 @@ QStringList LilyTools::tokenize(const QString& input) {
 
 QString LilyTools::format(const QString& input,int,int) {
     QStringList tokens = tokenize(input);
+    return QString();
 }

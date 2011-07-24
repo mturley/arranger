@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QDebug>
+#include <QFileDialog>
 #include <QScrollBar>
 
 #include "phraselistdelegate.h"
@@ -20,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     init();
-    testModel();
+    //testModel();
 }
 
 MainWindow::~MainWindow()
@@ -53,11 +54,20 @@ void MainWindow::init() {
     connect(ui->treeWidget,SIGNAL(itemClicked(QTreeWidgetItem*,int)),
             this,SLOT(onTreeItemClicked(QTreeWidgetItem*,int)));
 
+    // connect onTreeContextMenuRequested
+    connect(ui->treeWidget,SIGNAL(customContextMenuRequested(QPoint)),
+            this,SLOT(onTreeContextMenuRequested(QPoint)));
+
     // connect onContentEditChanged
     connect(ui->contentEdit,SIGNAL(textChanged()),this,SLOT(onContentEditChanged()));
 
     // connect onNameEditChanged
     connect(ui->nameEdit,SIGNAL(textChanged(QString)),this,SLOT(onNameEditChanged(QString)));
+
+    // connect file menu actions
+    connect(ui->actionOpen,SIGNAL(triggered()),this,SLOT(onOpen()));
+    connect(ui->actionSave,SIGNAL(triggered()),this,SLOT(onSave()));
+    connect(ui->actionSave_As,SIGNAL(triggered()),this,SLOT(onSaveAs()));
 }
 
 void MainWindow::testModel() {
@@ -70,14 +80,14 @@ void MainWindow::testModel() {
     Phrase* phraseG = new Phrase("PhraseG","e8 e e e f g f e c' c c d c b a g");
     Phrase* phraseH = new Phrase("PhraseH","f1~ f");
 
-    phraseA->refresh();
-    phraseB->refresh();
-    phraseC->refresh();
-    phraseD->refresh();
-    phraseE->refresh();
-    phraseF->refresh();
-    phraseG->refresh();
-    phraseH->refresh();
+    //phraseA->refresh();
+    //phraseB->refresh();
+    //phraseC->refresh();
+    //phraseD->refresh();
+    //phraseE->refresh();
+    //phraseF->refresh();
+    //phraseG->refresh();
+    //phraseH->refresh();
 
     Score* scoreA = new Score("ScoreA");
     Score* scoreB = new Score("ScoreB");
@@ -126,9 +136,9 @@ void MainWindow::testModel() {
     voiceB->setContent("\\voiceOne \\PhraseD \\PhraseE");
     staffA->setContent("\\VoiceB \\VoiceA");
 
-    voiceA->refresh();
-    voiceB->refresh();
-    staffA->refresh();
+    //voiceA->refresh();
+    //voiceB->refresh();
+    //staffA->refresh();
 
     ui->treeWidget->insertTopLevelItem(0,scoreA);
     ui->treeWidget->insertTopLevelItem(1,scoreB);
@@ -176,6 +186,10 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int col) {
     }
 }
 
+void MainWindow::onTreeContextMenuRequested(const QPoint& pos) {
+    qDebug() << "Context Menu requested at" << pos;
+}
+
 void MainWindow::onContentEditChanged() {
     qDebug() << "onContentEditChanged";
     if(m_selection) {
@@ -198,4 +212,75 @@ void MainWindow::onRefreshButtonClicked() {
         else
             m_selection->refresh();
     }
+}
+
+void MainWindow::onNew() {
+
+}
+
+void MainWindow::onOpen() {
+    QString fileName = QFileDialog::getOpenFileName(this, "Open Arranger File", QDir::home().absolutePath(), "Arranger Files (*.arr)");
+    qDebug() << "Opening:" << fileName;
+
+    if(fileName.isNull())
+        return;
+
+    QFile file(fileName);
+
+    if(!file.open(QIODevice::ReadOnly))
+        return;
+
+    qDebug() << "Creating data stream...";
+    QDataStream in(&file);
+
+    QList<Score> scores;
+
+    qDebug() << "Reading data...";
+    in >> scores;
+
+    qDebug() << "Setting data...";
+    qDebug() << "  " << scores.size() << "scores";
+
+    qDebug() << "about to clear";
+    ui->treeWidget->clear();
+    qDebug() << "treeWidget is clear";
+    for(int i = 0; i < scores.size(); i++) {
+        qDebug() << "inserting score" << i;
+        ui->treeWidget->insertTopLevelItem(i,new Score(scores.at(i)));
+    }
+
+    m_fileName = fileName;
+
+    qDebug() << "Done.";
+}
+
+void MainWindow::onSave() {
+    if(m_fileName.isNull()) {
+        onSaveAs();
+        return;
+    }
+
+    QFile file(m_fileName);
+
+    qDebug() << "Opening:" << m_fileName;
+    if(!file.open(QIODevice::WriteOnly))
+        return;
+
+    qDebug() << "Creating data stream...";
+    QDataStream out(&file);
+
+    qDebug() << "Writing data..." << ui->treeWidget->topLevelItemCount();
+    QList<Score> list;
+    for(int i = 0; i < ui->treeWidget->topLevelItemCount(); i++)
+        list.append(*(Score*)ui->treeWidget->topLevelItem(i));
+    out << list;
+
+    qDebug() << "Done.";
+}
+
+void MainWindow::onSaveAs() {
+    m_fileName = QFileDialog::getSaveFileName(this, "Save File",
+                                              QDir::home().absolutePath(),
+                                              "Arranger Files (*.arr)");
+    onSave();
 }

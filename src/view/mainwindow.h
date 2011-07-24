@@ -23,13 +23,19 @@ private:
 
 private slots:
     void onTreeItemClicked(QTreeWidgetItem* item, int col);
+    void onTreeContextMenuRequested(const QPoint&);
     void onContentEditChanged();
     void onNameEditChanged(QString);
     void onRefreshButtonClicked();
+    void onNew();
+    void onOpen();
+    void onSave();
+    void onSaveAs();
 
 private:
     Ui::MainWindow *ui;
     Displayable* m_selection;
+    QString m_fileName;
 
 };
 

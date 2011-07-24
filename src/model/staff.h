@@ -14,6 +14,7 @@ class Staff : public Displayable, public QTreeWidgetItem {
                "\\paper {\n"
                "  ragged-right = ##t\n"
                "  indent = 0.0\\mm\n"
+               "  page-count = 1\n"
                "}\n"
                "%1\n"
                "\\new Staff <<\n%2\n>>\n";
@@ -26,7 +27,10 @@ class Staff : public Displayable, public QTreeWidgetItem {
                "%2 = \\new Staff <<\n%3\n>>\n";
     }
 public:
+    Staff();
     Staff(QString);
+    Staff(const Staff&);
+    ~Staff();
 
     void addVoice(Voice*);
 
@@ -34,6 +38,10 @@ public:
     QString getWriteLy() const;
 
     QList<Phrase*>& getPhraseList();
+
+    friend QDataStream& operator<<(QDataStream& out, const Staff& staff);
+    friend QDataStream& operator>>(QDataStream& in, Staff& staff);
+
 private:
     QList<Voice*> m_voices;
 };

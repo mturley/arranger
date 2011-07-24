@@ -18,7 +18,8 @@ Displayable::Displayable(QString name)
       m_name(name) { }
 
 Displayable::Displayable(const Displayable& displayable)
-    : m_preview_flags(0),
+    : QObject(displayable.parent()),
+      m_preview_flags(0),
       m_image(0),
       m_content(displayable.content()),
       m_name(displayable.name()) { }
@@ -85,4 +86,31 @@ void Displayable::refresh() {
     setFlag(PreviewFlags::Loading);
 
     LilyGen::refreshPreview(this);
+}
+
+QDataStream& Displayable::operator<<(QDataStream& s) const {
+    s << m_name;
+    s << m_content;
+    return s;
+}
+
+QDataStream& Displayable::operator>>(QDataStream& s) {
+    clearFlags();
+    m_image = 0;
+    QString name,content;
+    s >> name;
+    s >> content;
+    setName(name);
+    setContent(content);
+    qDebug() << "m_name    : " << m_name;
+    qDebug() << "m_content : " << m_content;
+    return s;
+}
+
+QDataStream &operator<<(QDataStream &out, const Displayable &d) {
+    return d.operator<<(out);
+}
+
+QDataStream &operator>>(QDataStream &in, Displayable &d) {
+    return d.operator >>(in);
 }

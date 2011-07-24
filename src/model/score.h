@@ -8,7 +8,10 @@
 
 class Score : public Displayable, public QTreeWidgetItem {
 public:
+    Score();
     Score(QString);
+    Score(const Score&);
+    ~Score();
 
     void addStaff(Staff*);
 
@@ -16,6 +19,10 @@ public:
     QString getWriteLy() const;
 
     QList<Phrase*>& getPhraseList();
+
+    friend QDataStream& operator<<(QDataStream& out, const Score& score);
+    friend QDataStream& operator>>(QDataStream& in, Score& score);
+
 private:
     QList<Staff*> m_staves;
 };

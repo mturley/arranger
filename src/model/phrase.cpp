@@ -6,7 +6,9 @@
 #include "voice.h"
 #include "../lilygen.h"
 
-Phrase::Phrase(QString name, QString content, Voice* parent)
+Phrase::Phrase() : Displayable() { }
+
+Phrase::Phrase(QString name, QString content)
     : Displayable(name) {
     setContent(content);
 }
